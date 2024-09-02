@@ -12,9 +12,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
-import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
-import FormControlLabel from '@mui/material/FormControlLabel'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -231,7 +229,7 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                                         <FormControl>
                                             <CustomTextField
                                                 fullWidth
-                                                label='Password Konfirmasi'
+                                                label='Konfirmasi Password'
                                                 placeholder='············'
                                                 id='outlined-adornment-password'
                                                 type={isPasswordShown ? 'text' : 'password'}
@@ -259,20 +257,20 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <CustomTextField autoFocus fullWidth label='Photo' type='file' {...field} />
+                                            <CustomTextField autoFocus fullWidth label='File Badan/Perorangan' type='file' {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
 
-                            <Button fullWidth variant='contained' type='submit'>Login</Button>
+                            <Button fullWidth variant='contained' type='submit'>Register</Button>
                         </form>
 
                         <div className='flex justify-center items-center flex-wrap gap-2'>
-                            <Typography>New on our platform?</Typography>
-                            <Link href='/register' color='primary'>
-                                Create an account
+                            <Typography>Already have an account?</Typography>
+                            <Link href='/login' color='primary'>
+                                Login
                             </Link>
                         </div>
                     </Form>
