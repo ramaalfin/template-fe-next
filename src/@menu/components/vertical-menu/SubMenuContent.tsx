@@ -2,6 +2,8 @@
 import { forwardRef, useEffect, useState } from 'react'
 import type { ForwardRefRenderFunction, HTMLAttributes, MutableRefObject } from 'react'
 
+import Link from 'next/link'
+
 // Third-party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
@@ -14,7 +16,6 @@ import StyledSubMenuContent from '../../styles/StyledSubMenuContent'
 
 // Style Imports
 import styles from '../../styles/styles.module.css'
-import Link from 'next/link'
 
 export type SubMenuContentProps = HTMLAttributes<HTMLDivElement> &
   RootStylesType &
@@ -111,16 +112,20 @@ const SubMenuContent: ForwardRefRenderFunction<HTMLDivElement, SubMenuContentPro
     >
       {/* If browserScroll is false render PerfectScrollbar */}
       {!browserScroll && level === 0 && isPopoutWhenCollapsed && isCollapsed ? (
-        submenu.map((item, index) => (
-          <PerfectScrollbar key={index} options={{ suppressScrollX: true }}>
-            <ul className="py-2 px-4">{item.menu}</ul>
+        submenu.map((item) => (
+          <PerfectScrollbar key={item.id} options={{ suppressScrollX: true }}>
+            <ul className="py-3 px-4">
+              <li>
+                <Link href={item.url} replace={true}>{item.menu}</Link>
+              </li>
+            </ul>
           </PerfectScrollbar>
         ))
       ) : (
-        submenu.map((item, index) => (
-          <ul key={index} className="py-2 px-4">
+        submenu.map((item) => (
+          <div className="py-3 px-4" key={item.id}>
             <Link href={item.url}>{item.menu}</Link>
-          </ul>
+          </div>
         ))
       )}
     </StyledSubMenuContent>

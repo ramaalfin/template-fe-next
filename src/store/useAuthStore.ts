@@ -19,7 +19,7 @@ const useAuthStore = create<AuthState>()(
       logout: () => {
         set({ user: null, token: '' })
         localStorage.removeItem('auth-storage')
-        document.cookie = 'token=; Max-Age=0; path=/'
+        document.cookie = 'accessToken=; expires=; refreshToken=; path=/'
       }
     }),
     {

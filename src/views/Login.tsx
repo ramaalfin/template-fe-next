@@ -113,7 +113,7 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
 
       if (success && response && response.code === 200) {
         setUser(response.data.user);
-        setToken(response.data.tokens.access.token);
+        setToken(response.data.tokens);
 
         router.push('/home');
       } else if (response && response.code === 401) {
