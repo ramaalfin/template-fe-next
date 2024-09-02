@@ -26,7 +26,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { SystemMode } from '@core/types'
 
 // Component Imports
-import Link from '@components/Link'
+import Link from 'next/link'
 import Logo from '@components/layout/shared/Logo'
 
 import { loginFormSchema } from '@/lib/form-schema';
@@ -142,7 +142,7 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
         )}
       </div>
       <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
-        <Link className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]'>
+        <Link className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]' href='/'>
           <Logo />
         </Link>
         <div className='flex flex-col gap-6 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset] mbs-11 sm:mbs-14 md:mbs-0'>
@@ -196,6 +196,13 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
 
               <Button fullWidth variant='contained' type='submit'>Login</Button>
             </form>
+
+            <div className='flex justify-center items-center flex-wrap gap-2'>
+              <Typography>New on our platform?</Typography>
+              <Link href='/register' color='primary'>
+                Create an account
+              </Link>
+            </div>
           </Form>
         </div>
       </div>

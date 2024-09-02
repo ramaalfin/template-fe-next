@@ -246,6 +246,12 @@ const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
     '& textarea.MuiInputBase-inputSizeSmall:placeholder-shown': {
       overflowX: 'hidden'
     }
+  },
+
+  // hide arrow on input[type='number']
+  '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+    'WebkitAppearance': 'none',
+    margin: 0
   }
 }))
 
