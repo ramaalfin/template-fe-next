@@ -1,34 +1,24 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-import { deleteCookie, getCookie } from 'cookies-next'
+import { getCookie } from 'cookies-next'
 
 export function middleware(req: NextRequest) {
-  // const token = getCookie('accessToken', { req })
-  // const expires = getCookie('expires', { req })
+  const token = getCookie('accessToken', { req })
 
-  // if (expires) {
-  //   const expiresDate = new Date(expires as string)
-  //   const currentDate = new Date()
+  // user can access login page and register page without token
 
-  //   if (expiresDate <= currentDate) {
-  //     // Token has expired, delete the cookie and redirect to login
-  //     deleteCookie('accessToken', { req })
-  //     deleteCookie('expires', { req })
+  if (!token && req.nextUrl.pathname !== '/login' && req.nextUrl.pathname !== '/register') {
+    return
+  }
 
-  //     localStorage.removeItem('auth-storage')
-
-  //     return NextResponse.redirect(new URL('/login', req.url))
-  //   }
-  // }
-
-  // if (token && req.nextUrl.pathname === '/login') {
-  //   return NextResponse.redirect(new URL('/home', req.url))
-  // }
+  if (token && req.nextUrl.pathname === '/login') {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
+  }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/profile/:path*', '/login', '/register', '/home', '/about', '/']
+  matcher: ['/profile/:path*', '/login', '/register', '/dashboard', '/about', '/']
 }

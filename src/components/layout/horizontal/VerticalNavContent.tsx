@@ -69,7 +69,7 @@ const VerticalNavContent = ({ children }: ChildrenType) => {
   return (
     <>
       <NavHeader>
-        <Link href='/home'>
+        <Link href='/dashboard'>
           <Logo />
         </Link>
         <NavCollapseIcons

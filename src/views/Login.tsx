@@ -115,7 +115,7 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
         setUser(response.data.user);
         setToken(response.data.tokens);
 
-        router.push('/home');
+        router.push('/dashboard');
       } else if (response && response.code === 401) {
         alert(response.message);
       }
