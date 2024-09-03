@@ -82,7 +82,7 @@ const VerticalNavContent = ({ children }: ChildrenType) => {
       <ScrollWrapper
         {...(isBreakpointReached
           ? {
-            className: 'bs-full overflow-y-auto overflow-x-hidden',
+            className: 'bs-full overflow-y-auto overflow-x-hidden bg-[#B81118]',
             onScroll: container => scrollMenu(container, false)
           }
           : {

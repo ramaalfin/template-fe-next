@@ -72,26 +72,21 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false)
 
   // Vars
-  const darkImg = '/images/pages/auth-mask-dark.png'
-  const lightImg = '/images/pages/auth-mask-light.png'
-  const darkIllustration = '/images/illustrations/auth/v2-login-dark.png'
-  const lightIllustration = '/images/illustrations/auth/v2-login-light.png'
-  const borderedDarkIllustration = '/images/illustrations/auth/v2-login-dark-border.png'
-  const borderedLightIllustration = '/images/illustrations/auth/v2-login-light-border.png'
+  const darkIllustration = '/images/logo.png'
+  const lightIllustration = '/images/logo.png'
+  const bg = '/images/bg.png'
 
   // Hooks
   const router = useRouter()
   const { settings } = useSettings()
   const theme = useTheme()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
-  const authBackground = useImageVariant(mode, lightImg, darkImg)
+  const authBackground = useImageVariant(mode)
 
   const characterIllustration = useImageVariant(
     mode,
     lightIllustration,
     darkIllustration,
-    borderedLightIllustration,
-    borderedDarkIllustration
   )
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
@@ -131,6 +126,7 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
             'border-ie': settings.skin === 'bordered'
           }
         )}
+        style={{ backgroundImage: `url(${bg})` }}
       >
         <LoginIllustration src={characterIllustration} alt='character-illustration' />
         {!hidden && (
@@ -142,13 +138,10 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
         )}
       </div>
       <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
-        <Link className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]' href='/'>
-          <Logo />
-        </Link>
         <div className='flex flex-col gap-6 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset] mbs-11 sm:mbs-14 md:mbs-0'>
           <div className='flex flex-col gap-1'>
-            <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</Typography>
-            <Typography>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='h4'>Welcome to <span className='text-[#B81118]'>bjbsyariah</span> 👋🏻</Typography>
+            <Typography>Mitra Amanah Usaha Maslahah</Typography>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -198,9 +191,9 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
             </form>
 
             <div className='flex justify-center items-center flex-wrap gap-2'>
-              <Typography>New on our platform?</Typography>
-              <Link href='/register' color='primary'>
-                Create an account
+              <Typography>Belum Punya Akun?</Typography>
+              <Link href='/register' className='text-[#FEC400]'>
+                Register
               </Link>
             </div>
           </Form>

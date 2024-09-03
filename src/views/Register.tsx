@@ -67,25 +67,20 @@ const Register = ({ mode }: { mode: SystemMode }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(false)
 
     // Vars
-    const darkImg = '/images/pages/auth-mask-dark.png'
-    const lightImg = '/images/pages/auth-mask-light.png'
-    const darkIllustration = '/images/illustrations/auth/v2-register-dark.png'
-    const lightIllustration = '/images/illustrations/auth/v2-register-light.png'
-    const borderedDarkIllustration = '/images/illustrations/auth/v2-register-dark-border.png'
-    const borderedLightIllustration = '/images/illustrations/auth/v2-register-light-border.png'
+    const darkIllustration = '/images/logo.png'
+    const lightIllustration = '/images/logo.png'
+    const bg = '/images/bg.png'
 
     // Hooks
     const { settings } = useSettings()
     const theme = useTheme()
     const hidden = useMediaQuery(theme.breakpoints.down('md'))
-    const authBackground = useImageVariant(mode, lightImg, darkImg)
+    const authBackground = useImageVariant(mode)
 
     const characterIllustration = useImageVariant(
         mode,
         lightIllustration,
         darkIllustration,
-        borderedLightIllustration,
-        borderedDarkIllustration
     )
 
     const handleClickShowPassword = () => setIsPasswordShown(show => !show)
@@ -112,17 +107,6 @@ const Register = ({ mode }: { mode: SystemMode }) => {
     }
 
     const onSubmit = (val: z.infer<typeof registerFormSchema>) => {
-        // login(val, (success, response) => {
-
-        //     if (success && response && response.code === 200) {
-        //         setUser(response.data.user);
-        //         setToken(response.data.tokens);
-
-        //         router.push('/login');
-        //     } else if (response && response.code === 401) {
-        //         alert(response.message);
-        //     }
-        // });
         console.log(val);
     }
 
@@ -135,20 +119,15 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                         'border-ie': settings.skin === 'bordered'
                     }
                 )}
+                style={{ backgroundImage: `url(${bg})` }}
             >
                 <RegisterIllustration src={characterIllustration} alt='character-illustration' />
                 {!hidden && <MaskImg alt='mask' src={authBackground} />}
             </div>
             <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
-                <Link
-                    href='/login'
-                    className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]'
-                >
-                    <Logo />
-                </Link>
                 <div className='flex flex-col gap-6 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset] mbs-8 sm:mbs-11 md:mbs-0'>
                     <div className='flex flex-col gap-1'>
-                        <Typography variant='h4'>Adventure starts here 🚀</Typography>
+                        <Typography variant='h4'>Adventure starts here</Typography>
                         <Typography>Make your app management easy and fun!</Typography>
                     </div>
                     <Form {...form}>
@@ -268,8 +247,8 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                         </form>
 
                         <div className='flex justify-center items-center flex-wrap gap-2'>
-                            <Typography>Already have an account?</Typography>
-                            <Link href='/login' color='primary'>
+                            <Typography>Sudah Punya Akun?</Typography>
+                            <Link href='/login' className='text-[#FEC400]'>
                                 Login
                             </Link>
                         </div>

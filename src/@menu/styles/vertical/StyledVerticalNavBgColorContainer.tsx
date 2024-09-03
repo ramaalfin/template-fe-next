@@ -14,7 +14,7 @@ const StyledVerticalNavBgColorContainer = styled.div<StyledVerticalNavBgColorCon
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  ${({ backgroundColor }) => backgroundColor && `background-color:${backgroundColor};`}
+  background-color: #B81118;
 `
 
 export default StyledVerticalNavBgColorContainer
