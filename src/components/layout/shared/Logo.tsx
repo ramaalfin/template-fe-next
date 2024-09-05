@@ -72,16 +72,6 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
   return (
     <div className='flex items-center'>
       <VuexyLogo className='text-2xl text-primary' />
-      {/* <LogoText
-        color={color}
-        ref={logoTextRef}
-        isHovered={isHovered}
-        isCollapsed={layout === 'collapsed'}
-        transitionDuration={transitionDuration}
-        isBreakpointReached={isBreakpointReached}
-      >
-        {themeConfig.templateName}
-      </LogoText> */}
     </div>
   )
 }

@@ -1,5 +1,13 @@
+"use client"
+
 // Third-party Imports
 import 'react-perfect-scrollbar/dist/css/styles.css'
+
+import { useRouter } from 'next/navigation'
+
+import { IdleTimerProvider } from 'react-idle-timer'
+
+import { deleteCookie } from 'cookies-next'
 
 // Type Imports
 import type { ChildrenType } from '@core/types'
@@ -10,18 +18,31 @@ import '@/app/globals.css'
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
 
-export const metadata = {
-  title: 'Withold Tax Slip - BJBS',
-}
-
 const RootLayout = ({ children }: ChildrenType) => {
   // Vars
   const direction = 'ltr'
 
+  const router = useRouter()
+
+  const handleOnIdle = () => {
+    // Clear cookies and localStorage on idle
+    deleteCookie('accessToken')
+    deleteCookie('expires')
+    localStorage.removeItem('auth-storage')
+
+    // Redirect to login page
+    router.push('/login')
+  }
+
   return (
-    <html id='__next' lang='en' dir={direction}>
-      <body className='flex is-full min-bs-full flex-auto flex-col'>{children}</body>
-    </html>
+    <IdleTimerProvider
+      timeout={1000 * 60 * 3} // 3 minutes
+      onIdle={handleOnIdle}
+    >
+      <html id='__next' lang='en' dir={direction}>
+        <body className='flex is-full min-bs-full flex-auto flex-col'>{children}</body>
+      </html>
+    </IdleTimerProvider>
   )
 }
 

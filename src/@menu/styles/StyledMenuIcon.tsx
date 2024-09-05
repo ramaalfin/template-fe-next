@@ -9,6 +9,7 @@ const StyledMenuIcon = styled.span<RootStylesType>`
   align-items: center;
   justify-content: center;
   margin-inline-end: 10px;
+  color: #ffffff;
   ${({ rootStyles }) => rootStyles};
 `
 

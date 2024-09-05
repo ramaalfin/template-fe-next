@@ -112,14 +112,14 @@ const Navigation = (props: Props) => {
     >
       {/* Nav Header including Logo & nav toggle icons  */}
       <NavHeader>
-        <Link href='/dashboard'>
+        <Link href='/dashboard_admin'>
           <Logo />
         </Link>
         {!(isCollapsed && !isHovered) && (
           <NavCollapseIcons
-            lockedIcon={<i className='tabler-circle-dot text-xl' />}
-            unlockedIcon={<i className='tabler-circle text-xl' />}
-            closeIcon={<i className='tabler-x text-xl' />}
+            lockedIcon={<i className='tabler-circle-dot text-xl text-white' />}
+            unlockedIcon={<i className='tabler-circle text-xl text-white' />}
+            closeIcon={<i className='tabler-x text-xl text-white' />}
             onClick={() => updateSettings({ layout: !isCollapsed ? 'collapsed' : 'vertical' })}
           />
         )}
