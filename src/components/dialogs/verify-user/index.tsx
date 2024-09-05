@@ -4,27 +4,21 @@
 import { useEffect, useState } from 'react'
 
 // MUI Imports
-import Grid from '@mui/material/Grid'
 import Dialog from '@mui/material/Dialog'
 import Button from '@mui/material/Button'
 import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
-import Typography from '@mui/material/Typography'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import type { z } from 'zod'
 
 // Type Imports
 import type { ThemeColor } from '@core/types'
 
 // Component Imports
-import CustomTextField from '@core/components/mui/TextField'
 import DialogCloseButton from '../DialogCloseButton'
 
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { createUserFormSchema } from '@/lib/form-schema'
+import { Form } from '@/components/ui/form'
 
 type VerifyUserCardData = {
     badgeColor?: ThemeColor
@@ -52,10 +46,10 @@ const VerifyUserCard = ({ open, setOpen, data }: VerifyUserCardProps) => {
 
     // Form
     const form = useForm({
-        resolver: zodResolver(createUserFormSchema)
+        resolver: zodResolver()
     });
 
-    const onSubmit = (val: z.infer<typeof createUserFormSchema>) => {
+    const onSubmit = (val: any) => {
         console.log(val);
     }
 
