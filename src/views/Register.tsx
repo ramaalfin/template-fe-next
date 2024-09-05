@@ -7,8 +7,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 // MUI Imports
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { styled, useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -23,67 +21,29 @@ import type { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-// Type Imports
-import type { SystemMode } from '@core/types'
-
 // Component Imports
-import Logo from '@components/layout/shared/Logo'
 import CustomTextField from '@core/components/mui/TextField'
 
 // Hook Imports
-import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
 
 import { registerFormSchema } from '@/lib/form-schema'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import LogoAuth from '@/@core/svg/LogoAuth'
 
-
-// Styled Custom Components
-const RegisterIllustration = styled('img')(({ theme }) => ({
-    zIndex: 2,
-    blockSize: 'auto',
-    maxBlockSize: 600,
-    maxInlineSize: '100%',
-    margin: theme.spacing(12),
-    [theme.breakpoints.down(1536)]: {
-        maxBlockSize: 550
-    },
-    [theme.breakpoints.down('lg')]: {
-        maxBlockSize: 450
-    }
-}))
-
-const MaskImg = styled('img')({
-    blockSize: 'auto',
-    maxBlockSize: 345,
-    inlineSize: '100%',
-    position: 'absolute',
-    insetBlockEnd: 0,
-    zIndex: -1
-})
-
-const Register = ({ mode }: { mode: SystemMode }) => {
+const Register = () => {
     // States
     const [isPasswordShown, setIsPasswordShown] = useState(false)
+    const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false)
 
     // Vars
-    const darkIllustration = '/images/logo.png'
-    const lightIllustration = '/images/logo.png'
     const bg = '/images/bg.png'
 
     // Hooks
     const { settings } = useSettings()
-    const theme = useTheme()
-    const hidden = useMediaQuery(theme.breakpoints.down('md'))
-    const authBackground = useImageVariant(mode)
-
-    const characterIllustration = useImageVariant(
-        mode,
-        lightIllustration,
-        darkIllustration,
-    )
 
     const handleClickShowPassword = () => setIsPasswordShown(show => !show)
+    const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown(show => !show)
 
     // Form
     const form = useForm({
@@ -119,16 +79,18 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                         'border-ie': settings.skin === 'bordered'
                     }
                 )}
-                style={{ backgroundImage: `url(${bg})` }}
+                style={{
+                    backgroundImage: `url(${bg})`,
+                    backgroundSize: 'cover',
+                }}
             >
-                <RegisterIllustration src={characterIllustration} alt='character-illustration' />
-                {!hidden && <MaskImg alt='mask' src={authBackground} />}
+                <LogoAuth />
             </div>
             <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
                 <div className='flex flex-col gap-6 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset] mbs-8 sm:mbs-11 md:mbs-0'>
                     <div className='flex flex-col gap-1'>
-                        <Typography variant='h4'>Adventure starts here</Typography>
-                        <Typography>Make your app management easy and fun!</Typography>
+                        <Typography variant='h3' className='font-bold'>Pendaftaran User</Typography>
+                        {/* <Typography>Tax Slip</Typography> */}
                     </div>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" encType='multipart/form-data'>
@@ -138,7 +100,7 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <CustomTextField autoFocus fullWidth label='NPWP' placeholder='Enter your NPWP' {...field} onChange={(e) => { npwpInputMask(e); field.onChange(e); }} />
+                                            <CustomTextField autoFocus fullWidth label='NPWP' placeholder='Masukkan NPWP' {...field} onChange={(e) => { npwpInputMask(e); field.onChange(e); }} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -151,7 +113,7 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <CustomTextField autoFocus fullWidth label='Nama' placeholder='Enter your Nama' {...field} />
+                                            <CustomTextField autoFocus fullWidth label='Nama Perusahaan' placeholder='Masukkan Nama Perusahaan' {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -164,7 +126,7 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <CustomTextField autoFocus fullWidth label='Email' placeholder='Enter your email or username' {...field} />
+                                            <CustomTextField autoFocus fullWidth label='Email' placeholder='Masukkan email' {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -195,6 +157,7 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                                                 {...field}
                                             />
                                         </FormControl>
+                                        <p className='text-xs italic text-[#B81118]'>*Password harus terdiri dari alfabet, angka, karakter khusus, huruf kecil dan huruf besar</p>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -211,12 +174,12 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                                                 label='Konfirmasi Password'
                                                 placeholder='············'
                                                 id='outlined-adornment-password'
-                                                type={isPasswordShown ? 'text' : 'password'}
+                                                type={isConfirmPasswordShown ? 'text' : 'password'}
                                                 InputProps={{
                                                     endAdornment: (
                                                         <InputAdornment position='end'>
-                                                            <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
-                                                                <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
+                                                            <IconButton edge='end' onClick={handleClickShowConfirmPassword} onMouseDown={e => e.preventDefault()}>
+                                                                <i className={isConfirmPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                                                             </IconButton>
                                                         </InputAdornment>
                                                     )

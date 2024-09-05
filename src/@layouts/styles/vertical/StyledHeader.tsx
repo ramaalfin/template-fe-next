@@ -54,7 +54,7 @@ const StyledHeader = styled.header<StyledHeaderProps>`
     &:not(.${verticalLayoutClasses.headerBlur}).scrolled.${verticalLayoutClasses.headerAttached},
       &:not(.${verticalLayoutClasses.headerBlur}).scrolled.${verticalLayoutClasses.headerDetached}
       .${verticalLayoutClasses.navbar} {
-      background-color: var(--mui-palette-background-paper);
+      background-color: #B81118;
     }
 
     &.${verticalLayoutClasses.headerDetached}.scrolled .${verticalLayoutClasses.navbar} {
@@ -86,7 +86,7 @@ const StyledHeader = styled.header<StyledHeaderProps>`
         &.${verticalLayoutClasses.headerFloating}
         .${verticalLayoutClasses.navbar} {
         backdrop-filter: blur(6px);
-        background-color: rgb(var(--background-color-rgb) / 0.88);
+        background-color: #B81118;
       }
 
       &.${verticalLayoutClasses.headerFloating} {
@@ -128,7 +128,7 @@ const StyledHeader = styled.header<StyledHeaderProps>`
       &:not(.${verticalLayoutClasses.headerFloating}).${verticalLayoutClasses.headerDetached}
       .${verticalLayoutClasses.navbar} {
       ${({ theme }) =>
-        `transition: ${theme.transitions.create(['box-shadow', 'border-width', 'padding-inline', 'backdrop-filter'])}`};
+    `transition: ${theme.transitions.create(['box-shadow', 'border-width', 'padding-inline', 'backdrop-filter'])}`};
     }
     &:not(.${verticalLayoutClasses.headerFloating}).${verticalLayoutClasses.headerAttached}
       .${verticalLayoutClasses.navbar},
@@ -142,7 +142,7 @@ const StyledHeader = styled.header<StyledHeaderProps>`
     padding-block-start: 16px;
 
     .${verticalLayoutClasses.navbar} {
-      background-color: var(--mui-palette-background-paper);
+      background-color: #B81118;
       border-radius: var(--border-radius);
       padding-inline: 16px;
       box-shadow: var(--mui-customShadows-sm);
