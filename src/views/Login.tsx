@@ -65,7 +65,7 @@ const LoginV2 = () => {
         setUser(response.data.user);
         setToken(response.data.tokens);
 
-        router.push('/dashboard');
+        router.push('/dashboard_admin');
       } else if (response && response.code === 401) {
         alert(response.message);
       }
@@ -140,13 +140,6 @@ const LoginV2 = () => {
 
               <Button fullWidth variant='contained' type='submit' > Login</Button>
             </form >
-
-            <div className='flex justify-center items-center flex-wrap gap-2'>
-              <Typography>Belum punya akun?</Typography>
-              <Link href='/register' className='text-[#FEC400]'>
-                Daftar
-              </Link>
-            </div>
           </Form >
         </div >
       </div >
