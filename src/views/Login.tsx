@@ -22,9 +22,6 @@ import type { z } from 'zod';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 
-// Type Imports
-import type { SystemMode } from '@core/types'
-
 import { loginFormSchema } from '@/lib/form-schema';
 
 // Hook Imports
@@ -106,13 +103,13 @@ const LoginV2 = () => {
                   <FormItem>
                     <FormControl>
                       <CustomTextField autoFocus fullWidth label='Email' placeholder='Masukkan email' {...field} />
-                    </FormControl>
+                    </FormControl >
                     <FormMessage />
-                  </FormItem>
+                  </FormItem >
                 )}
               />
 
-              <FormField
+              < FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
@@ -141,19 +138,19 @@ const LoginV2 = () => {
                 )}
               />
 
-              <Button fullWidth variant='contained' type='submit'>Login</Button>
-            </form>
+              <Button fullWidth variant='contained' type='submit' > Login</Button>
+            </form >
 
             <div className='flex justify-center items-center flex-wrap gap-2'>
-              <Typography>Belum Punya Akun?</Typography>
+              <Typography>Belum punya akun?</Typography>
               <Link href='/register' className='text-[#FEC400]'>
-                Register
+                Daftar
               </Link>
             </div>
-          </Form>
-        </div>
-      </div>
-    </div>
+          </Form >
+        </div >
+      </div >
+    </div >
   )
 }
 

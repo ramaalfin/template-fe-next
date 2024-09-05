@@ -47,20 +47,16 @@ export default function Page() {
                 <CardContent>
                     <TableContainer>
                         <Table className={tableStyles.table}>
-                            <TableHead
-                                sx={{
-                                    backgroundColor: 'var(--mui-palette-primary-main)',
-                                }}
-                            >
+                            <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ color: "white" }}>No</TableCell>
-                                    <TableCell sx={{ color: "white" }}>Bulan</TableCell>
-                                    <TableCell sx={{ color: "white" }}>Vendor</TableCell>
-                                    <TableCell sx={{ color: "white" }}>NPWP</TableCell>
-                                    <TableCell sx={{ color: "white" }}>Tahun</TableCell>
-                                    <TableCell sx={{ color: "white" }}>Download</TableCell>
-                                    <TableCell sx={{ color: "white" }}>Jumlah</TableCell>
-                                    <TableCell sx={{ color: "white" }}>Status</TableCell>
+                                    <TableCell>No</TableCell>
+                                    <TableCell>Bulan</TableCell>
+                                    <TableCell>Vendor</TableCell>
+                                    <TableCell>NPWP</TableCell>
+                                    <TableCell>Tahun</TableCell>
+                                    <TableCell>Download</TableCell>
+                                    <TableCell>Jumlah</TableCell>
+                                    <TableCell>Status</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
