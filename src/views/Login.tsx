@@ -6,6 +6,8 @@ import { useState } from 'react'
 // Next Imports
 import { useRouter } from 'next/navigation'
 
+import Link from 'next/link'
+
 import { useForm } from 'react-hook-form';
 
 // MUI Imports
@@ -63,7 +65,7 @@ const LoginV2 = () => {
         setUser(response.data.user);
         setToken(response.data.tokens);
 
-        router.push('/dashboard_admin');
+        router.push('/dashboard');
       } else if (response && response.code === 401) {
         alert(response.message);
       }
@@ -100,14 +102,14 @@ const LoginV2 = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <CustomTextField autoFocus fullWidth label='Username' placeholder='Masukkan username' {...field} />
-                    </FormControl>
+                      <CustomTextField autoFocus fullWidth label='Email' placeholder='Masukkan email' {...field} />
+                    </FormControl >
                     <FormMessage />
-                  </FormItem>
+                  </FormItem >
                 )}
               />
 
-              <FormField
+              < FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
@@ -136,12 +138,19 @@ const LoginV2 = () => {
                 )}
               />
 
-              <Button fullWidth variant='contained' type='submit'>Login</Button>
-            </form>
-          </Form>
-        </div>
-      </div>
-    </div>
+              <Button fullWidth variant='contained' type='submit' > Login</Button>
+            </form >
+
+            <div className='flex justify-center items-center flex-wrap gap-2'>
+              <Typography>Belum punya akun?</Typography>
+              <Link href='/register' className='text-[#FEC400]'>
+                Daftar
+              </Link>
+            </div>
+          </Form >
+        </div >
+      </div >
+    </div >
   )
 }
 

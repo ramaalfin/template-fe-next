@@ -1,36 +1,36 @@
-"use client";
+'use client'
 
 // next js
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
 
 // import plugins
-import { useIdleTimer } from "react-idle-timer";
+import { useIdleTimer } from 'react-idle-timer'
 
 export const useConfigIdleTimer = () => {
   // use router dari next js
-  const router = useRouter();
+  const router = useRouter()
 
   // handle action ketika tidak ada aktifitas selama waktu yang telah di tentukan
   const handleOnIdle = () => {
-    router.push("/login");
-  };
+    router.push('/login')
+  }
 
   //   handle ketika user masih aktif
   const handleOnActive = (event: any) => {
-    console.log("user is active", event);
-    console.log("time remaining", getRemainingTime());
-  };
+    console.log('user is active', event)
+    console.log('time remaining', getRemainingTime())
+  }
 
   //   handle user jika ada aksi
   const handleOnAction = (event: any) => {
-    console.log("user did something", event);
-  };
+    console.log('user did something', event)
+  }
 
   const { getRemainingTime } = useIdleTimer({
     timeout: 1000 * 5,
     onIdle: handleOnIdle,
     onActive: handleOnActive,
     onAction: handleOnAction,
-    debounce: 500,
-  });
-};
+    debounce: 500
+  })
+}

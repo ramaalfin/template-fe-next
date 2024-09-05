@@ -13,12 +13,12 @@ export function middleware(req: NextRequest) {
 
   // Redirect to dashboard if token exists on login page
   if (token && req.nextUrl.pathname === '/login') {
-    return NextResponse.redirect(new URL('/dashboard_admin', req.url))
+    return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/profile/:path*', '/login', '/register', '/dashboard_admin', '/about', '/']
+  matcher: ['/profile/:path*', '/login', '/register', '/dashboard', '/about']
 }

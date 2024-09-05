@@ -47,9 +47,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
           : {
               color: 'var(--mui-palette-primary-contrastText)',
               background:
-                theme.direction === 'ltr'
-                  ? `rgba(255, 255, 255, 0.2) 0%`
-                  : `rgba(255, 255, 255, 0.2) !important`,
+                theme.direction === 'ltr' ? `rgba(255, 255, 255, 0.2) 0%` : `rgba(255, 255, 255, 0.2) !important`,
               boxShadow: 'var(--mui-customShadows-primary-sm)',
               [`& .${menuClasses.icon}`]: {
                 color: 'inherit'
