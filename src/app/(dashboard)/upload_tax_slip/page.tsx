@@ -45,6 +45,7 @@ export default function Page() {
                                     <TableCell sx={{ color: "white" }}>Bulan</TableCell>
                                     <TableCell sx={{ color: "white" }}>Vendor</TableCell>
                                     <TableCell sx={{ color: "white" }}>File</TableCell>
+                                    <TableCell sx={{ color: "white" }}>Jumlah</TableCell>
                                     <TableCell sx={{ color: "white" }}>Action</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -55,16 +56,11 @@ export default function Page() {
                                     <TableCell>Januari</TableCell>
                                     <TableCell>PT. ABC</TableCell>
                                     <TableCell>Download</TableCell>
+                                    <TableCell>1</TableCell>
                                     <TableCell>
-                                        {/* button edit and delete */}
-                                        <div className="flex flex-row gap-2">
-                                            <Button variant="contained" color="warning">
-                                                Edit
-                                            </Button>
-                                            <Button variant="contained" color="error">
-                                                Delete
-                                            </Button>
-                                        </div>
+                                        <Button variant="contained" color="error">
+                                            Delete
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             </TableBody>

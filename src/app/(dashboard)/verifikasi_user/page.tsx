@@ -54,6 +54,7 @@ export default function Page() {
                                     <TableCell sx={{ color: "white" }}>No</TableCell>
                                     <TableCell sx={{ color: "white" }}>Nama Vendor</TableCell>
                                     <TableCell sx={{ color: "white" }}>NPWP</TableCell>
+                                    <TableCell sx={{ color: "white" }}>Email</TableCell>
                                     <TableCell sx={{ color: "white" }}>File</TableCell>
                                     <TableCell sx={{ color: "white" }}>Action</TableCell>
                                 </TableRow>
@@ -63,7 +64,12 @@ export default function Page() {
                                     <TableCell>1</TableCell>
                                     <TableCell>PT. ABC</TableCell>
                                     <TableCell>123456789</TableCell>
-                                    <TableCell>Download</TableCell>
+                                    <TableCell>user@mail.com</TableCell>
+                                    <TableCell>
+                                        <Button variant="contained" color="error">
+                                            Download
+                                        </Button>
+                                    </TableCell>
                                     <TableCell>
                                         {/* button edit and delete */}
                                         <div className="flex flex-row gap-2">

@@ -102,7 +102,7 @@ const LoginV2 = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <CustomTextField autoFocus fullWidth label='Email' placeholder='Masukkan email' {...field} />
+                      <CustomTextField autoFocus fullWidth label='Username' placeholder='Masukkan Username' {...field} />
                     </FormControl >
                     <FormMessage />
                   </FormItem >

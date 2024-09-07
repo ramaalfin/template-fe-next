@@ -26,6 +26,7 @@ import DialogCloseButton from '../DialogCloseButton'
 
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { uploadBuktiPotongFormSchema } from '@/lib/form-schema'
+import AppReactDatepicker from '@/lib/styles/AppReactDatepicker'
 
 type UploadBuktiPotongCardData = {
     badgeColor?: ThemeColor
@@ -54,8 +55,7 @@ const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardPro
     const form = useForm({
         defaultValues: {
             vendor: '',
-            tahun: '',
-            bulan: '',
+            tahun: new Date(),
             photo: ''
         },
 
@@ -76,7 +76,7 @@ const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardPro
             <DialogCloseButton onClick={() => setOpen(false)} disableRipple>
                 <i className='tabler-x' />
             </DialogCloseButton>
-            <DialogTitle variant='h4' className='p-6 sm:pbs-16 sm:pbe-6 sm:pli-16'>
+            <DialogTitle variant='h4' className='p-6 sm:pbs-8 sm:pbe-6 sm:pli-8'>
                 Upload
                 <Typography component='span' className='flex flex-col'>
                     Create New
@@ -84,7 +84,7 @@ const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardPro
             </DialogTitle>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                    <DialogContent className='overflow-visible pbs-0 p-6 sm:pli-16 space-y-1'>
+                    <DialogContent className='overflow-visible pbs-0 p-6 sm:pli-8 space-y-1'>
                         <Grid container spacing={6}>
                             <Grid item xs={6}>
                                 <Typography variant='h6' className='mb-4'>
@@ -98,7 +98,7 @@ const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardPro
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <CustomTextField select fullWidth {...field} id='custom-select'>
+                                                {/* <CustomTextField select fullWidth {...field} id='custom-select'>
                                                     <MenuItem value=''>Pilih Tahun</MenuItem>
                                                     <MenuItem value='2024'>2024</MenuItem>
                                                     <MenuItem value='2023'>2023</MenuItem>
@@ -115,43 +115,16 @@ const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardPro
                                                     <MenuItem value='2012'>2012</MenuItem>
                                                     <MenuItem value='2011'>2011</MenuItem>
                                                     <MenuItem value='2010'>2010</MenuItem>
-                                                </CustomTextField>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </Grid>
-                        </Grid>
+                                                </CustomTextField> */}
 
-                        <Grid container spacing={6}>
-                            <Grid item xs={6}>
-                                <Typography variant='h6' className='mb-4'>
-                                    Bulan
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <FormField
-                                    control={form.control}
-                                    name="bulan"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <CustomTextField select fullWidth {...field} id='custom-select'>
-                                                    <MenuItem value=''>Pilih Bulan</MenuItem>
-                                                    <MenuItem value='Januari'>Januari</MenuItem>
-                                                    <MenuItem value='Februari'>Februari</MenuItem>
-                                                    <MenuItem value='Maret'>Maret</MenuItem>
-                                                    <MenuItem value='April'>April</MenuItem>
-                                                    <MenuItem value='Mei'>Mei</MenuItem>
-                                                    <MenuItem value='Juni'>Juni</MenuItem>
-                                                    <MenuItem value='Juli'>Juli</MenuItem>
-                                                    <MenuItem value='Agustus'>Agustus</MenuItem>
-                                                    <MenuItem value='September'>September</MenuItem>
-                                                    <MenuItem value='Oktober'>Oktober</MenuItem>
-                                                    <MenuItem value='November'>November</MenuItem>
-                                                    <MenuItem value='Desember'>Desember</MenuItem>
-                                                </CustomTextField>
+                                                <AppReactDatepicker
+                                                    selected={field.value}
+                                                    showYearDropdown
+                                                    showMonthDropdown
+                                                    placeholderText='MM/DD/YYYY'
+                                                    customInput={<CustomTextField fullWidth label='Birth Date' placeholder='MM-DD-YYYY' />}
+                                                    onChange={(date) => field.onChange(date)}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
