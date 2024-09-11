@@ -6,10 +6,9 @@ export const loginFormSchema = z.object({
 })
 
 export const uploadBuktiPotongFormSchema = z.object({
-  vendor: z.string().refine(data => data.length > 0, { message: 'Vendor wajib diisi' }),
-  tahun: z.date(),
-  photo: z.string().refine(data => data.endsWith('.jpg') || data.endsWith('.png'), {
-    message: 'Bukti potong harus berformat JPG atau PNG'
+  periode: z.date(),
+  file: z.any().refine(file => file instanceof File || file === null, {
+    message: 'File harus diunggah'
   })
 })
 
