@@ -9,11 +9,12 @@ type OpenDialogVerifyUserProps = {
     dialog: ComponentType<any>
     elementProps?: any
     dialogProps?: any
+    id_user: string
 }
 
 const OpenDialogVerifyUser = (props: OpenDialogVerifyUserProps) => {
     // Props
-    const { element: Element, dialog: Dialog, elementProps, dialogProps } = props
+    const { element: Element, dialog: Dialog, elementProps, dialogProps, id_user: id_user } = props
 
     // States
     const [open, setOpen] = useState(false)
@@ -32,7 +33,7 @@ const OpenDialogVerifyUser = (props: OpenDialogVerifyUserProps) => {
             {/* Receive element component as prop and we will pass onclick event which changes state to open */}
             <Element onClick={handleOnClick} {...restElementProps} className="bg-yellow-400" />
             {/* Receive dialog component as prop and we will pass open and setOpen props to that component */}
-            <Dialog open={open} setOpen={setOpen} {...dialogProps} />
+            <Dialog open={open} setOpen={setOpen} {...dialogProps} id_user={id_user} />
         </>
     )
 }

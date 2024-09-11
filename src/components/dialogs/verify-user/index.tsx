@@ -9,9 +9,6 @@ import Button from '@mui/material/Button'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogActions from '@mui/material/DialogActions'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-
 // Type Imports
 import type { ThemeColor } from '@core/types'
 
@@ -19,6 +16,7 @@ import type { ThemeColor } from '@core/types'
 import DialogCloseButton from '../DialogCloseButton'
 
 import { Form } from '@/components/ui/form'
+import { activateUser } from '@/service/user'
 
 type VerifyUserCardData = {
     badgeColor?: ThemeColor
@@ -28,6 +26,7 @@ type VerifyUserCardProps = {
     open: boolean
     setOpen: (open: boolean) => void
     data?: VerifyUserCardData
+    id_user: string
 }
 
 const initialCardData: VerifyUserCardProps['data'] = {
@@ -35,7 +34,7 @@ const initialCardData: VerifyUserCardProps['data'] = {
     badgeColor: 'primary'
 }
 
-const VerifyUserCard = ({ open, setOpen, data }: VerifyUserCardProps) => {
+const VerifyUserCard = ({ open, setOpen, data, id_user }: VerifyUserCardProps) => {
     // States
     const [cardData, setCardData] = useState(initialCardData)
 
@@ -44,13 +43,15 @@ const VerifyUserCard = ({ open, setOpen, data }: VerifyUserCardProps) => {
         setCardData(initialCardData)
     }
 
-    // Form
-    const form = useForm({
-        resolver: zodResolver()
-    });
+    const onSubmit = async () => {
+        const response = await activateUser(id_user)
 
-    const onSubmit = (val: any) => {
-        console.log(val);
+        if (response?.data.code === 200) {
+            setOpen(false)
+            window.location.reload()
+        } else {
+            alert('Failed to activate user')
+        }
     }
 
     useEffect(() => {
@@ -65,18 +66,14 @@ const VerifyUserCard = ({ open, setOpen, data }: VerifyUserCardProps) => {
             <DialogTitle variant='h4' className='p-6 sm:pbs-8 sm:pbe-6 sm:pli-8 text-center'>
                 Apakah anda yakin ingin memverifikasi user ini?
             </DialogTitle>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex space-y-5 justify-center">
-                    <DialogActions className='flex justify-start pbs-0 p-6 sm:pbe-8 sm:pli-8'>
-                        <Button variant='contained' type='submit'>
-                            Simpan
-                        </Button>
-                        <Button variant='outlined' onClick={handleClose}>
-                            Batal
-                        </Button>
-                    </DialogActions>
-                </form>
-            </Form>
+            <DialogActions className='flex justify-center pbs-0 p-6 sm:pbe-8 sm:pli-8'>
+                <Button variant='contained' type='submit' onClick={onSubmit}>
+                    Simpan
+                </Button>
+                <Button variant='outlined' onClick={handleClose}>
+                    Batal
+                </Button>
+            </DialogActions>
         </Dialog>
     )
 }

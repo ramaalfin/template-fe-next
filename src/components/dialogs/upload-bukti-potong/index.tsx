@@ -88,7 +88,6 @@ const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardPro
             const response = await uploadTaxSlip(formData)
 
             if (response?.data.code === 200) {
-                // reload browser
                 window.location.reload()
             } else {
                 alert('Gagal mengunggah file')

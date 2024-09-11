@@ -79,9 +79,6 @@ export default function Page() {
             })
     }
 
-    console.log(allTaxSlip);
-
-
     return (
         <>
             <Card>

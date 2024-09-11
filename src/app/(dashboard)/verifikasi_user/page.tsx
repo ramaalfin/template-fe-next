@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useState } from 'react'
+
 // components
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -14,21 +16,16 @@ import type { ButtonProps } from '@mui/material/Button'
 
 import { Button } from '@mui/material'
 
+import { getInactiveUser } from '@/service/user'
+
 import tableStyles from '@core/styles/table.module.css'
 
-import UploadBuktiPotongCard from '@/components/dialogs/upload-bukti-potong'
-import OpenDialogUploadBuktiPotong from '@/components/dialogs/OpenDialogUploadBuktiPotong'
 import OpenDialogVerifyUser from '@/components/dialogs/OpenDialogVerifyUser'
 import VerifyUserCard from '@/components/dialogs/verify-user'
 import OpenDialogRejectUser from '@/components/dialogs/OpenDialogRejectUser'
 import RejectUserCard from '@/components/dialogs/reject-user'
 
 export default function Page() {
-    const buttonProps: ButtonProps = {
-        variant: 'contained',
-        children: 'Create New'
-    }
-
     const buttonVerifyProps: ButtonProps = {
         variant: 'contained',
         children: 'Verify'
@@ -38,6 +35,21 @@ export default function Page() {
         variant: 'contained',
         children: 'Reject'
     }
+
+    const [inactiveUsers, setInactiveUsers] = useState<{
+        id_user: string,
+        nama: string,
+        npwp: string,
+        email: string,
+    }[]>([])
+
+    useEffect(() => {
+        getInactiveUser()?.then((res) => {
+            setInactiveUsers(res.data.data)
+        }).catch((err) => {
+            console.log(err)
+        })
+    }, [])
 
     return (
         <>
@@ -60,25 +72,30 @@ export default function Page() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell>1</TableCell>
-                                    <TableCell>PT. ABC</TableCell>
-                                    <TableCell>123456789</TableCell>
-                                    <TableCell>user@mail.com</TableCell>
-                                    <TableCell>
-                                        <Button variant="contained" color="error">
-                                            Download
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        {/* button edit and delete */}
-                                        <div className="flex flex-row gap-2">
-                                            <OpenDialogVerifyUser element={Button} elementProps={buttonVerifyProps} dialog={VerifyUserCard} />
+                                {inactiveUsers.length > 0 ? inactiveUsers.map((item, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{index + 1}</TableCell>
+                                        <TableCell>{item.nama}</TableCell>
+                                        <TableCell>{item.npwp}</TableCell>
+                                        <TableCell>{item.email}</TableCell>
+                                        <TableCell>
+                                            <Button variant="contained" color="error">
+                                                Download
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-row gap-2">
+                                                <OpenDialogVerifyUser element={Button} elementProps={buttonVerifyProps} dialog={VerifyUserCard} id_user={item.id_user} />
 
-                                            <OpenDialogRejectUser element={Button} elementProps={buttonRejectProps} dialog={RejectUserCard} />
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
+                                                <OpenDialogRejectUser element={Button} elementProps={buttonRejectProps} dialog={RejectUserCard} id_user={item.id_user} />
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                )) :
+                                    <TableRow>
+                                        <TableCell colSpan={6} className='text-center'>Tidak Ada Data</TableCell>
+                                    </TableRow>
+                                }
                             </TableBody>
                         </Table>
                     </TableContainer>

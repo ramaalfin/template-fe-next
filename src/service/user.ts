@@ -31,3 +31,22 @@ export const getActiveUser = () => {
     console.error(error)
   }
 }
+
+export const activateUser = async (id_user: string) => {
+  const token = getCookie('accessToken')
+
+  try {
+    return axios.put(
+      `${process.env.NEXT_PUBLIC_APP_API}/v1/sys/users/activate/${id_user}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  } catch (error: any) {
+    console.error(error)
+  }
+}
