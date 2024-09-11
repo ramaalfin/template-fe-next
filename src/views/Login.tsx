@@ -6,8 +6,6 @@ import { useState } from 'react'
 // Next Imports
 import { useRouter } from 'next/navigation'
 
-import Link from 'next/link'
-
 import { useForm } from 'react-hook-form';
 
 // MUI Imports
@@ -58,18 +56,17 @@ const LoginV2 = () => {
     resolver: zodResolver(loginFormSchema)
   });
 
-  const onSubmit = (val: z.infer<typeof loginFormSchema>) => {
-    login(val, (success, response) => {
+  const onSubmit = async (val: z.infer<typeof loginFormSchema>) => {
+    const response = await login(val);
 
-      if (success && response && response.code === 200) {
-        setUser(response.data.user);
-        setToken(response.data.tokens);
+    if (response && response.code === 200) {
+      setUser(response.data.user);
+      setToken(response.data.tokens);
 
-        router.push('/dashboard_admin');
-      } else if (response && response.code === 401) {
-        alert(response.message);
-      }
-    });
+      router.push('/dashboard_admin');
+    } else if (response && response.code === 401) {
+      alert(response.message);
+    }
   }
 
   return (

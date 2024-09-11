@@ -7,8 +7,6 @@ import { useRouter } from 'next/navigation'
 
 import { IdleTimerProvider } from 'react-idle-timer'
 
-import { deleteCookie } from 'cookies-next'
-
 // Type Imports
 import type { ChildrenType } from '@core/types'
 
@@ -17,6 +15,8 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
+import { logout } from '@/service/auth'
+import useAuthStore from '@/store/useAuthStore'
 
 const RootLayout = ({ children }: ChildrenType) => {
   // Vars
@@ -24,11 +24,20 @@ const RootLayout = ({ children }: ChildrenType) => {
 
   const router = useRouter()
 
+  const { token } = useAuthStore()
+
   const handleOnIdle = () => {
-    // Clear cookies and localStorage on idle
-    deleteCookie('accessToken')
-    deleteCookie('expires')
+    if (!token) {
+      return
+    }
+
+    logout({
+      refreshToken: token.refresh.token
+    })
+
+    useAuthStore.setState({ token: null, user: null })
     localStorage.removeItem('auth-storage')
+    document.cookie = 'accessToken=; expires=; path=/;'
 
     // Redirect to login page
     router.push('/login')

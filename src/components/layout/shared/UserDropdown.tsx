@@ -18,13 +18,11 @@ import ClickAwayListener from '@mui/material/ClickAwayListener'
 import MenuList from '@mui/material/MenuList'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
-
-// Store Imports
+import { logout } from '@/service/auth'
 import useAuthStore from '@/store/useAuthStore'
 
 // Styled component for badge content
@@ -49,13 +47,22 @@ const UserDropdown = () => {
 
   const { settings } = useSettings()
 
-  const { user } = useAuthStore()
+  const { user, token } = useAuthStore()
   const [name, setName] = useState<string | null>(null)
   const [email, setEmail] = useState<string | null>(null)
+  const [photo, setPhoto] = useState<string | null>(null)
 
   useEffect(() => {
     setName(user?.nama)
     setEmail(user?.email)
+  }, [user])
+
+  useEffect(() => {
+    if (user?.photo) {
+      setPhoto(user.photo)
+    } else {
+      setPhoto('/images/avatars/nophoto.jpg')
+    }
   }, [user])
 
   const handleDropdownOpen = () => {
@@ -74,10 +81,19 @@ const UserDropdown = () => {
     setOpen(false)
   }
 
-  const logout = useAuthStore((state) => state.logout)
-
   const handleUserLogout = async () => {
-    logout()
+    if (!token) {
+      return
+    }
+
+    await logout({
+      refreshToken: token.refresh.token
+    })
+
+    useAuthStore.setState({ token: null, user: null })
+    localStorage.removeItem('auth-storage')
+    document.cookie = 'accessToken=; expires=; path=/;'
+
     router.push('/login')
   }
 
@@ -92,8 +108,8 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt='John Doe'
-          src='/images/avatars/1.png'
+          alt={name}
+          src={photo}
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
         />
@@ -117,7 +133,7 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e as MouseEvent | TouchEvent)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-6 gap-2' tabIndex={-1}>
-                    <Avatar alt='John Doe' src='/images/avatars/1.png' />
+                    <Avatar alt={name} src={photo} />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
                         {name}

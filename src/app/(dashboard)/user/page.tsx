@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useState } from 'react'
+
 // components
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -14,6 +16,8 @@ import type { ButtonProps } from '@mui/material/Button'
 
 import { Button } from '@mui/material'
 
+import { getActiveUser } from '@/service/user'
+
 import tableStyles from '@core/styles/table.module.css'
 import OpenDialogUserCreate from '@/components/dialogs/OpenDialogUserCreate'
 import UserCreateCard from '@/components/dialogs/user-create'
@@ -23,6 +27,20 @@ export default function Page() {
         variant: 'contained',
         children: 'Create New'
     }
+
+    const [activeUsers, setActiveUsers] = useState<{
+        nama: string,
+        npwp: string,
+        email: string
+    }[]>([])
+
+    useEffect(() => {
+        getActiveUser()?.then((res) => {
+            setActiveUsers(res.data.data)
+        }).catch((err) => {
+            console.log(err)
+        })
+    }, [])
 
     return (
         <>
@@ -48,28 +66,34 @@ export default function Page() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell>1</TableCell>
-                                    <TableCell>PT. ABC</TableCell>
-                                    <TableCell>1234567890</TableCell>
-                                    <TableCell>user@mail.com</TableCell>
-                                    <TableCell>
-                                        <Button variant="contained" color="error">
-                                            Download
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        {/* button edit and delete */}
-                                        <div className="flex flex-row gap-2">
-                                            <Button variant="contained" color="warning">
-                                                Edit
-                                            </Button>
+                                {activeUsers.length > 0 ? activeUsers.map((item, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{index + 1}</TableCell>
+                                        <TableCell>{item.nama}</TableCell>
+                                        <TableCell>{item.npwp}</TableCell>
+                                        <TableCell>{item.email}</TableCell>
+                                        <TableCell>
                                             <Button variant="contained" color="error">
-                                                Delete
+                                                Download
                                             </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
+                                        </TableCell>
+                                        <TableCell>
+                                            {/* button edit and delete */}
+                                            <div className="flex flex-row gap-2">
+                                                <Button variant="contained" color="warning">
+                                                    Edit
+                                                </Button>
+                                                <Button variant="contained" color="error">
+                                                    Delete
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                )) :
+                                    <TableRow>
+                                        <TableCell colSpan={6} className='text-center'>Tidak Ada Data</TableCell>
+                                    </TableRow>
+                                }
                             </TableBody>
                         </Table>
                     </TableContainer>

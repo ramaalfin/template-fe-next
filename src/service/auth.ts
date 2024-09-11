@@ -7,7 +7,7 @@ interface LoginProps {
   password: string
 }
 
-export const login = async ({ email, password }: LoginProps, callback: (success: boolean, data: any) => void) => {
+export const login = async ({ email, password }: LoginProps) => {
   try {
     const response = await axios.post(
       ` ${process.env.NEXT_PUBLIC_APP_API}/v1/auth/login`,
@@ -25,8 +25,26 @@ export const login = async ({ email, password }: LoginProps, callback: (success:
     setCookie('accessToken', response.data.data.tokens.access.token)
     setCookie('expires', new Date(response.data.data.tokens.access.expires).toString())
 
-    callback(true, response.data)
+    return response.data
   } catch (error: any) {
-    callback(false, 'Invalid email or password')
+    return error.response.data
+  }
+}
+
+export const logout = async ({ refreshToken }: { refreshToken: number }) => {
+  try {
+    await axios.post(
+      ` ${process.env.NEXT_PUBLIC_APP_API}/v1/auth/logout`,
+      {
+        refreshToken: refreshToken
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  } catch (error) {
+    console.error(error)
   }
 }
