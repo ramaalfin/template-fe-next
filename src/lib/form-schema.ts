@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { zfd } from 'zod-form-data'
 
 export const loginFormSchema = z.object({
   email: z.string({ required_error: 'Email is required' }).email({ message: 'Invalid email address' }),
@@ -16,9 +17,20 @@ export const createUserFormSchema = z.object({
   npwp: z.string().refine(data => data.length === 16, { message: 'NPWP harus terdiri dari 16 digit' }),
   nama: z.string().min(3, 'Nama minimal harus terdiri dari 3 karakter'),
   email: z.string().email({ message: 'Alamat email tidak valid' }),
-  photo: z.string().refine(data => data.endsWith('.jpg') || data.endsWith('.png'), {
-    message: 'File Badan/Perorangan harus berformat JPG atau PNG'
-  })
+  password: z
+    .string()
+    .min(6, 'Password minimal harus terdiri dari 6 karakter')
+    .refine(data => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/.test(data), {
+      message: 'Password harus terdiri dari alfabet, angka, karakter khusus, huruf kecil dan huruf besar'
+    }),
+  file: zfd
+    .file()
+    .refine(file => file.size < 5000000, {
+      message: "File can't be bigger than 5MB."
+    })
+    .refine(file => ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type), {
+      message: 'Format file tidak valid'
+    })
 })
 
 export const profileFormSchema = z

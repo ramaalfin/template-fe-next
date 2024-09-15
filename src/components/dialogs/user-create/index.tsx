@@ -11,6 +11,8 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Typography from '@mui/material/Typography'
+import { toast } from 'react-toastify'
+import { CircularProgress, IconButton, InputAdornment } from '@mui/material'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -25,6 +27,12 @@ import DialogCloseButton from '../DialogCloseButton'
 
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { createUserFormSchema } from '@/lib/form-schema'
+
+// Custom Hook
+import useLoading from '@/hooks/useLoading'
+
+// Service Imports
+import { createUser } from '@/service/user'
 
 type UserCreateCardData = {
     badgeColor?: ThemeColor
@@ -42,8 +50,11 @@ const initialCardData: UserCreateCardProps['data'] = {
 }
 
 const UserCreateCard = ({ open, setOpen, data }: UserCreateCardProps) => {
+    const { loading, withLoading } = useLoading()
+
     // States
     const [cardData, setCardData] = useState(initialCardData)
+    const [isPasswordShown, setIsPasswordShown] = useState(false)
 
     const handleClose = () => {
         setOpen(false)
@@ -56,10 +67,13 @@ const UserCreateCard = ({ open, setOpen, data }: UserCreateCardProps) => {
             npwp: '',
             nama: '',
             email: '',
-            photo: ''
+            password: '',
+            file: ''
         },
         resolver: zodResolver(createUserFormSchema)
     });
+
+    const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
     // npwp input mask must be 16 digit
     const npwpInputMask = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,8 +83,21 @@ const UserCreateCard = ({ open, setOpen, data }: UserCreateCardProps) => {
         e.target.value = npwp.slice(0, 16);
     }
 
-    const onSubmit = (val: z.infer<typeof createUserFormSchema>) => {
-        console.log(val);
+    const onSubmit = async (val: z.infer<typeof createUserFormSchema>) => {
+        await withLoading(async () => {
+            try {
+                const response = await createUser(val);
+
+                if (response.code === 200) {
+                    toast.success(response.message);
+                    setOpen(false)
+                } else {
+                    toast.error(response.message);
+                }
+            } catch (error) {
+                toast.error("Gagal menghubungkan ke server");
+            }
+        })
     }
 
     useEffect(() => {
@@ -83,7 +110,7 @@ const UserCreateCard = ({ open, setOpen, data }: UserCreateCardProps) => {
             <DialogCloseButton onClick={() => setOpen(false)} disableRipple>
                 <i className='tabler-x' />
             </DialogCloseButton>
-            <DialogTitle variant='h4' className='p-6 sm:pbs-16 sm:pbe-6 sm:pli-16'>
+            <DialogTitle variant='h4' className='p-6 sm:pbs-8 sm:pbe-6 sm:pli-8'>
                 User
                 <Typography component='span' className='flex flex-col'>
                     Create New
@@ -91,7 +118,7 @@ const UserCreateCard = ({ open, setOpen, data }: UserCreateCardProps) => {
             </DialogTitle>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                    <DialogContent className='overflow-visible pbs-0 p-6 sm:pli-16 space-y-1'>
+                    <DialogContent className='overflow-visible pbs-0 p-6 sm:pli-8 space-y-1'>
                         <Grid container spacing={6}>
                             <Grid item xs={6}>
                                 <Typography variant='h6' className='mb-4'>
@@ -149,7 +176,44 @@ const UserCreateCard = ({ open, setOpen, data }: UserCreateCardProps) => {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <CustomTextField autoFocus fullWidth placeholder='Enter your email or username' {...field} />
+                                                <CustomTextField autoFocus fullWidth placeholder='Enter your email' {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </Grid>
+                        </Grid>
+
+                        <Grid container spacing={6}>
+                            <Grid item xs={6}>
+                                <Typography variant='h6' className='mb-4'>
+                                    Password
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <CustomTextField
+                                                    fullWidth
+                                                    placeholder='············'
+                                                    id='outlined-adornment-password'
+                                                    type={isPasswordShown ? 'text' : 'password'}
+                                                    InputProps={{
+                                                        endAdornment: (
+                                                            <InputAdornment position='end'>
+                                                                <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
+                                                                    <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
+                                                                </IconButton>
+                                                            </InputAdornment>
+                                                        )
+                                                    }}
+                                                    {...field}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -167,12 +231,24 @@ const UserCreateCard = ({ open, setOpen, data }: UserCreateCardProps) => {
                             <Grid item xs={6}>
                                 <FormField
                                     control={form.control}
-                                    name="photo"
-                                    render={({ field }) => (
+                                    name="file"
+                                    render={({ field: { value, onChange, ...fieldProps } }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <CustomTextField autoFocus fullWidth type='file' {...field} />
+                                                <CustomTextField
+                                                    autoFocus
+                                                    fullWidth
+                                                    type='file'
+                                                    InputProps={{
+                                                        readOnly: true,
+                                                    }}
+                                                    {...fieldProps}
+                                                    onChange={(event) =>
+                                                        onChange(event.target.files && event.target.files[0])
+                                                    }
+                                                />
                                             </FormControl>
+                                            <Typography className='text-xs italic text-[#B81118]'>*File harus berformat PNG, JPEG, JPG</Typography>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -180,9 +256,10 @@ const UserCreateCard = ({ open, setOpen, data }: UserCreateCardProps) => {
                             </Grid>
                         </Grid>
                     </DialogContent>
-                    <DialogActions className='flex justify-start pbs-0 p-6 sm:pbe-16 sm:pli-16'>
-                        <Button variant='contained' type='submit'>
-                            Simpan
+
+                    <DialogActions className='flex justify-start pbs-0 p-6 sm:pbe-8 sm:pli-8'>
+                        <Button fullWidth variant='contained' type='submit' disabled={loading}>
+                            {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Simpan'}
                         </Button>
                     </DialogActions>
                 </form>
