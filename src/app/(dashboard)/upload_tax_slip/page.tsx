@@ -11,18 +11,21 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import TableBody from '@mui/material/TableBody'
-
+import { Button, CircularProgress } from '@mui/material'
 import type { ButtonProps } from '@mui/material/Button'
-
-import { Button } from '@mui/material'
+import { toast, ToastContainer } from 'react-toastify'
 
 import tableStyles from '@core/styles/table.module.css'
-
 import UploadBuktiPotongCard from '@/components/dialogs/upload-bukti-potong'
 import OpenDialogUploadBuktiPotong from '@/components/dialogs/OpenDialogUploadBuktiPotong'
 import { downloadTaxSlip, getAllTaxSlip } from '@/service/tax-slip'
 
+// Custom Hook
+import useLoading from '@/hooks/useLoading';
+
 export default function Page() {
+    const { withLoading } = useLoading()
+
     const buttonProps: ButtonProps = {
         variant: 'contained',
         children: 'Upload Tax Slip'
@@ -39,9 +42,11 @@ export default function Page() {
         }
     }[]>([])
 
+    const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
+
     useEffect(() => {
         getAllTaxSlip()?.then((res) => {
-            setAllTaxSlip(res.data.data)
+            setAllTaxSlip(res.data.data.data)
         }).catch((err) => {
             console.log(err)
         })
@@ -62,9 +67,12 @@ export default function Page() {
         'Desember'
     ]
 
-    const handleDownload = (file_tax_slip: string) => {
-        downloadTaxSlip(file_tax_slip)
-            .then((res) => {
+    const handleDownload = async (index: number, file_tax_slip: string) => {
+        setLoadingIndex(index);
+
+        await withLoading(async () => {
+            try {
+                const res = await downloadTaxSlip(file_tax_slip);
                 const base64Data = res.data.data;
                 const fileName = file_tax_slip.split('|')[0];
                 const downloadLink = document.createElement("a");
@@ -73,14 +81,17 @@ export default function Page() {
                 downloadLink.download = fileName ?? 'file';
                 downloadLink.click();
                 downloadLink.remove();
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+            } catch (error) {
+                toast.error('Gagal mengunduh file. Silakan coba lagi nanti.');
+            } finally {
+                setLoadingIndex(null);
+            }
+        });
     }
 
     return (
         <>
+            <ToastContainer />
             <Card>
                 <CardContent>
                     <div className="mb-4">
@@ -114,8 +125,17 @@ export default function Page() {
                                         <TableCell>{item.tahun}</TableCell>
                                         <TableCell>{item.jumlah_file}</TableCell>
                                         <TableCell>
-                                            <Button variant="contained" color="error" onClick={() => handleDownload(`${item.file_tax_slip}`)}>
-                                                Download
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                onClick={() => handleDownload(index, item.file_tax_slip)}
+                                                disabled={loadingIndex === index}
+                                            >
+                                                {loadingIndex === index ? (
+                                                    <CircularProgress size={24} sx={{ color: '#ffffff' }} />
+                                                ) : (
+                                                    'Download'
+                                                )}
                                             </Button>
                                         </TableCell>
                                         <TableCell>

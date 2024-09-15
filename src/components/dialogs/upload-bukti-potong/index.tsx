@@ -11,10 +11,12 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Typography from '@mui/material/Typography'
+import { CircularProgress } from '@mui/material';
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ToastContainer, toast } from 'react-toastify';
 
 // Type Imports
 import type { ThemeColor } from '@core/types'
@@ -27,6 +29,9 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { uploadBuktiPotongFormSchema } from '@/lib/form-schema'
 import AppReactDatepicker from '@/lib/styles/AppReactDatepicker'
 import { uploadTaxSlip } from '@/service/tax-slip'
+
+// Custom Hook
+import useLoading from '@/hooks/useLoading';
 
 type UploadBuktiPotongCardData = {
     badgeColor?: ThemeColor
@@ -44,6 +49,8 @@ const initialCardData: UploadBuktiPotongCardProps['data'] = {
 }
 
 const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardProps) => {
+    const { loading, withLoading } = useLoading()
+
     // States
     const [cardData, setCardData] = useState(initialCardData)
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -84,17 +91,20 @@ const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardPro
         formData.append('bulan', bulan.toString())
         formData.append('tahun', tahun.toString())
 
-        try {
-            const response = await uploadTaxSlip(formData)
+        await withLoading(async () => {
+            try {
+                const response = await uploadTaxSlip(formData)
 
-            if (response?.data.code === 200) {
-                window.location.reload()
-            } else {
-                alert('Gagal mengunggah file')
+                if (response?.data.code === 200) {
+                    window.location.reload()
+                    toast.success('Berhasil mengunggah file')
+                } else {
+                    toast.error('Gagal mengunggah file')
+                }
+            } catch (error) {
+                toast.error('Gagal mengunggah file')
             }
-        } catch (error) {
-            console.error(error)
-        }
+        })
 
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
@@ -109,82 +119,90 @@ const UploadBuktiPotongCard = ({ open, setOpen, data }: UploadBuktiPotongCardPro
     }, [open])
 
     return (
-        <Dialog open={open} onClose={handleClose} sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}>
-            <DialogCloseButton onClick={() => setOpen(false)} disableRipple>
-                <i className='tabler-x' />
-            </DialogCloseButton>
-            <DialogTitle variant='h4' className='p-6 sm:pbs-8 sm:pbe-6 sm:pli-8'>
-                Upload
-                <Typography component='span' className='flex flex-col'>
-                    Tax Slip
-                </Typography>
-            </DialogTitle>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" encType='multipart/form-data'>
-                    <DialogContent className='overflow-visible pbs-0 p-6 sm:pli-8 space-y-1'>
-                        <Grid container spacing={6}>
-                            <Grid item xs={6}>
-                                <Typography variant='h6' className='mb-4'>
-                                    Periode
-                                </Typography>
+        <>
+            <ToastContainer />
+            <Dialog open={open} onClose={handleClose} sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}>
+                <DialogCloseButton onClick={() => setOpen(false)} disableRipple>
+                    <i className='tabler-x' />
+                </DialogCloseButton>
+                <DialogTitle variant='h4' className='p-6 sm:pbs-8 sm:pbe-6 sm:pli-8'>
+                    Upload
+                    <Typography component='span' className='flex flex-col'>
+                        Tax Slip
+                    </Typography>
+                </DialogTitle>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" encType='multipart/form-data'>
+                        <DialogContent className='overflow-visible pbs-0 p-6 sm:pli-8 space-y-1'>
+                            <Grid container spacing={6}>
+                                <Grid item xs={6}>
+                                    <Typography variant='h6' className='mb-4'>
+                                        Periode
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormField
+                                        control={form.control}
+                                        name="periode"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <AppReactDatepicker
+                                                        selected={field.value}
+                                                        showMonthYearPicker
+                                                        placeholderText='MM/YYYY'
+                                                        dateFormat='MM/yyyy'
+                                                        customInput={<CustomTextField fullWidth />}
+                                                        onChange={(date) => field.onChange(date)}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={6}>
-                                <FormField
-                                    control={form.control}
-                                    name="periode"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <AppReactDatepicker
-                                                    selected={field.value}
-                                                    showMonthYearPicker
-                                                    placeholderText='MM/YYYY'
-                                                    dateFormat='MM/yyyy'
-                                                    customInput={<CustomTextField fullWidth />}
-                                                    onChange={(date) => field.onChange(date)}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </Grid>
-                        </Grid>
 
-                        <Grid container spacing={6}>
-                            <Grid item xs={6}>
-                                <Typography variant='h6' className='mb-4'>
-                                    Bukti Potong
-                                </Typography>
+                            <Grid container spacing={6}>
+                                <Grid item xs={6}>
+                                    <Typography variant='h6' className='mb-4'>
+                                        Bukti Potong
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormField
+                                        control={form.control}
+                                        name="file"
+                                        render={({ }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <CustomTextField
+                                                        ref={fileInputRef}
+                                                        fullWidth
+                                                        type='file'
+                                                    />
+                                                </FormControl>
+                                                {errorFile && <FormMessage>{errorFile}</FormMessage>}
+                                            </FormItem>
+                                        )}
+                                    />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={6}>
-                                <FormField
-                                    control={form.control}
-                                    name="file"
-                                    render={({ }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <CustomTextField
-                                                    ref={fileInputRef}
-                                                    fullWidth
-                                                    type='file'
-                                                />
-                                            </FormControl>
-                                            {errorFile && <FormMessage>{errorFile}</FormMessage>}
-                                        </FormItem>
-                                    )}
-                                />
-                            </Grid>
-                        </Grid>
-                    </DialogContent>
-                    <DialogActions className='flex justify-start pbs-0 p-6 sm:pbe-8 sm:pli-8'>
-                        <Button variant='contained' type='submit' fullWidth>
-                            Simpan
-                        </Button>
-                    </DialogActions>
-                </form>
-            </Form>
-        </Dialog >
+                        </DialogContent>
+                        <DialogActions className='flex justify-start pbs-0 p-6 sm:pbe-8 sm:pli-8'>
+                            <Button
+                                variant='contained'
+                                type='submit'
+                                fullWidth
+                                disabled={loading}
+                            >
+                                {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Upload'}
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </Form>
+            </Dialog >
+        </>
     )
 }
 

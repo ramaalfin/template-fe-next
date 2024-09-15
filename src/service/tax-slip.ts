@@ -1,5 +1,4 @@
 import axios from 'axios'
-
 import { getCookie } from 'cookies-next'
 
 export const getAllTaxSlip = () => {

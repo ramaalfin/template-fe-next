@@ -46,3 +46,7 @@ export const profileFormSchema = z
       })
     }
   })
+
+export const rejectUserFormSchema = z.object({
+  keterangan: z.string().min(3, 'Keterangan minimal harus terdiri dari 3 karakter')
+})

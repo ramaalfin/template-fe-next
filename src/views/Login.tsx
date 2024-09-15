@@ -13,12 +13,14 @@ import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Button from '@mui/material/Button'
+import { CircularProgress } from '@mui/material';
 
 // Third-party Imports
 import classnames from 'classnames'
 import type { z } from 'zod';
-
+import { ToastContainer, toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 
 import { loginFormSchema } from '@/lib/form-schema';
 
@@ -31,7 +33,12 @@ import { login } from '@/service/auth';
 import useAuthStore from '@/store/useAuthStore';
 import LogoAuth from '@/@core/svg/LogoAuth';
 
+// Custom Hook
+import useLoading from '@/hooks/useLoading';
+
 const LoginV2 = () => {
+  const { loading, withLoading } = useLoading()
+
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
 
@@ -57,16 +64,25 @@ const LoginV2 = () => {
   });
 
   const onSubmit = async (val: z.infer<typeof loginFormSchema>) => {
-    const response = await login(val);
+    await withLoading(async () => {
+      try {
+        const response = await login(val);
 
-    if (response && response.code === 200) {
-      setUser(response.data.user);
-      setToken(response.data.tokens);
-
-      router.push('/dashboard_admin');
-    } else if (response && response.code === 401) {
-      alert(response.message);
-    }
+        if (response.code === 200) {
+          setUser(response.data.user);
+          setToken(response.data.tokens);
+          router.push('/dashboard_admin');
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error("Gagal menghubungkan ke server");
+        } else {
+          toast.error('Terjadi kesalahan');
+        }
+      }
+    });
   }
 
   return (
@@ -87,6 +103,8 @@ const LoginV2 = () => {
       </div>
       <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
         <div className='flex flex-col gap-6 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset] mbs-11 sm:mbs-14 md:mbs-0'>
+          <ToastContainer />
+
           <div className='flex flex-col gap-1'>
             <Typography variant='h4'>Welcome to <span className='text-[#B81118]'>BJBSyariah</span> 👋🏻</Typography>
             <Typography>Mitra Amanah Usaha Maslahah</Typography>
@@ -135,7 +153,14 @@ const LoginV2 = () => {
                 )}
               />
 
-              <Button fullWidth variant='contained' type='submit' > Login</Button>
+              <Button
+                fullWidth
+                variant='contained'
+                type='submit'
+                disabled={loading}
+              >
+                {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Login'}
+              </Button>
             </form >
           </Form >
         </div >

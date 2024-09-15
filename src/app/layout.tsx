@@ -18,6 +18,8 @@ import '@assets/iconify-icons/generated-icons.css'
 import { logout } from '@/service/auth'
 import useAuthStore from '@/store/useAuthStore'
 
+import 'react-toastify/dist/ReactToastify.css';
+
 const RootLayout = ({ children }: ChildrenType) => {
   // Vars
   const direction = 'ltr'

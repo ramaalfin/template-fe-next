@@ -19,11 +19,16 @@ import MenuList from '@mui/material/MenuList'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
+import { CircularProgress } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 import { logout } from '@/service/auth'
 import useAuthStore from '@/store/useAuthStore'
+
+// Custom Hook
+import useLoading from '@/hooks/useLoading';
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -36,6 +41,8 @@ const BadgeContentSpan = styled('span')({
 })
 
 const UserDropdown = () => {
+  const { loading, withLoading } = useLoading()
+
   // States
   const [open, setOpen] = useState(false)
 
@@ -86,19 +93,25 @@ const UserDropdown = () => {
       return
     }
 
-    await logout({
-      refreshToken: token.refresh.token
+    await withLoading(async () => {
+      try {
+        await logout(token)
+
+        useAuthStore.setState({ token: null, user: null })
+        localStorage.removeItem('auth-storage')
+        document.cookie = 'accessToken=; expires=; path=/;'
+
+        router.push('/login')
+      } catch (error) {
+        toast.error('Terjadi kesalahan')
+      }
     })
-
-    useAuthStore.setState({ token: null, user: null })
-    localStorage.removeItem('auth-storage')
-    document.cookie = 'accessToken=; expires=; path=/;'
-
-    router.push('/login')
   }
 
   return (
     <>
+      <ToastContainer />
+
       <Badge
         ref={anchorRef}
         overlap='circular'
@@ -151,8 +164,9 @@ const UserDropdown = () => {
                       endIcon={<i className='tabler-logout' />}
                       onClick={handleUserLogout}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
+                      disabled={loading}
                     >
-                      Logout
+                      {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Logout'}
                     </Button>
                   </div>
                 </MenuList>

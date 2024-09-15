@@ -11,18 +11,23 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import TableBody from '@mui/material/TableBody'
-
+import { Button, CircularProgress } from '@mui/material'
 import type { ButtonProps } from '@mui/material/Button'
-
-import { Button } from '@mui/material'
+import { toast, ToastContainer } from 'react-toastify'
 
 import { getActiveUser } from '@/service/user'
 
 import tableStyles from '@core/styles/table.module.css'
 import OpenDialogUserCreate from '@/components/dialogs/OpenDialogUserCreate'
 import UserCreateCard from '@/components/dialogs/user-create'
+import { getFile } from '@/service/file'
+
+// Custom Hook
+import useLoading from '@/hooks/useLoading';
 
 export default function Page() {
+    const { withLoading } = useLoading()
+
     const buttonProps: ButtonProps = {
         variant: 'contained',
         children: 'Create New'
@@ -31,16 +36,41 @@ export default function Page() {
     const [activeUsers, setActiveUsers] = useState<{
         nama: string,
         npwp: string,
-        email: string
+        email: string,
+        file_badan: string
     }[]>([])
+
+    const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
 
     useEffect(() => {
         getActiveUser()?.then((res) => {
-            setActiveUsers(res.data.data)
+            setActiveUsers(res.data.data.data)
         }).catch((err) => {
             console.log(err)
         })
     }, [])
+
+    const handleDownload = async (index: number, file_badan: string) => {
+        setLoadingIndex(index);
+
+        await withLoading(async () => {
+            try {
+                const res = await getFile(file_badan);
+                const base64Data = res.data.data;
+                const fileName = file_badan.split('|')[0];
+                const downloadLink = document.createElement("a");
+
+                downloadLink.href = base64Data;
+                downloadLink.download = fileName ?? 'file';
+                downloadLink.click();
+                downloadLink.remove();
+            } catch (error) {
+                toast.error('Gagal mengunduh file. Silakan coba lagi nanti.');
+            } finally {
+                setLoadingIndex(null);
+            }
+        });
+    }
 
     return (
         <>
@@ -49,6 +79,7 @@ export default function Page() {
                     <div className="mb-4">
                         <OpenDialogUserCreate element={Button} elementProps={buttonProps} dialog={UserCreateCard} />
                     </div>
+                    <ToastContainer />
                     <TableContainer>
                         <Table className={tableStyles.table}>
                             <TableHead
@@ -73,8 +104,17 @@ export default function Page() {
                                         <TableCell>{item.npwp}</TableCell>
                                         <TableCell>{item.email}</TableCell>
                                         <TableCell>
-                                            <Button variant="contained" color="error">
-                                                Download
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                onClick={() => handleDownload(index, item.file_badan)}
+                                                disabled={loadingIndex === index}
+                                            >
+                                                {loadingIndex === index ? (
+                                                    <CircularProgress size={24} sx={{ color: '#ffffff' }} />
+                                                ) : (
+                                                    'Download'
+                                                )}
                                             </Button>
                                         </TableCell>
                                         <TableCell>

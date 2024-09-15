@@ -11,17 +11,15 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import TableBody from '@mui/material/TableBody'
+import type { ButtonProps } from '@mui/material/Button'
 import { Button, CircularProgress } from '@mui/material'
 import { toast, ToastContainer } from 'react-toastify'
-import type { ButtonProps } from '@mui/material/Button'
 
-import { getInactiveUser } from '@/service/user'
+import { getRejectUser } from '@/service/user'
 
 import tableStyles from '@core/styles/table.module.css'
 import OpenDialogVerifyUser from '@/components/dialogs/OpenDialogVerifyUser'
 import VerifyUserCard from '@/components/dialogs/verify-user'
-import OpenDialogRejectUser from '@/components/dialogs/OpenDialogRejectUser'
-import RejectUserCard from '@/components/dialogs/rejected-user'
 import { getFile } from '@/service/file'
 
 // Custom Hook
@@ -35,12 +33,7 @@ export default function Page() {
         children: 'Verify'
     }
 
-    const buttonRejectProps: ButtonProps = {
-        variant: 'contained',
-        children: 'Reject'
-    }
-
-    const [inactiveUsers, setInactiveUsers] = useState<{
+    const [rejectedUsers, setRejectedUsers] = useState<{
         id_user: string,
         nama: string,
         npwp: string,
@@ -51,8 +44,8 @@ export default function Page() {
     const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
 
     useEffect(() => {
-        getInactiveUser()?.then((res) => {
-            setInactiveUsers(res.data.data.data)
+        getRejectUser()?.then((res) => {
+            setRejectedUsers(res.data.data.data)
         }).catch((err) => {
             console.log(err)
         })
@@ -102,7 +95,7 @@ export default function Page() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {inactiveUsers.length > 0 ? inactiveUsers.map((item, index) => (
+                                {rejectedUsers.length > 0 ? rejectedUsers.map((item, index) => (
                                     <TableRow key={index}>
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell>{item.nama}</TableCell>
@@ -125,8 +118,6 @@ export default function Page() {
                                         <TableCell>
                                             <div className="flex flex-row gap-2">
                                                 <OpenDialogVerifyUser element={Button} elementProps={buttonVerifyProps} dialog={VerifyUserCard} id_user={item.id_user} />
-
-                                                <OpenDialogRejectUser element={Button} elementProps={buttonRejectProps} dialog={RejectUserCard} id_user={item.id_user} nama={item.nama} npwp={item.npwp} />
                                             </div>
                                         </TableCell>
                                     </TableRow>
