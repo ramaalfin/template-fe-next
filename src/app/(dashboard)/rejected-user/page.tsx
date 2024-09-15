@@ -12,7 +12,7 @@ import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import TableBody from '@mui/material/TableBody'
 import type { ButtonProps } from '@mui/material/Button'
-import { Button, CircularProgress } from '@mui/material'
+import { Button, CircularProgress, MenuItem } from '@mui/material'
 import { toast, ToastContainer } from 'react-toastify'
 
 import { getRejectUser } from '@/service/user'
@@ -21,6 +21,10 @@ import tableStyles from '@core/styles/table.module.css'
 import OpenDialogVerifyUser from '@/components/dialogs/OpenDialogVerifyUser'
 import VerifyUserCard from '@/components/dialogs/verify-user'
 import { getFile } from '@/service/file'
+import Sort from '@/components/Sort'
+import Pagination from '@/components/Pagination'
+import CustomTextField from '@/@core/components/mui/TextField'
+import VendorSearch from '@/components/vendor-search'
 
 // Custom Hook
 import useLoading from '@/hooks/useLoading';
@@ -41,15 +45,61 @@ export default function Page() {
         file_badan: string
     }[]>([])
 
+    const [vendorName, setVendorName] = useState('')
     const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
+    const [pagination, setPagination] = useState({});
+    const [sortConfig, setSortConfig] = useState({ key: "npwp", direction: "asc" });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
-        getRejectUser()?.then((res) => {
-            setRejectedUsers(res.data.data.data)
-        }).catch((err) => {
-            console.log(err)
-        })
-    }, [])
+        const fetchData = async () => {
+            try {
+                const res = await getRejectUser(
+                    currentPage,
+                    itemsPerPage,
+                    sortConfig.key,
+                    sortConfig.direction
+                );
+
+                if (res && res.data && res.data.data) {
+                    setRejectedUsers(res.data.data.data);
+                    setPagination(res.data.data.pageInfo);
+                } else {
+                    toast.error('Gagal mengambil data. Silakan coba lagi nanti.');
+                }
+            } catch (error) {
+                toast.error('Gagal mengambil data. Silakan coba lagi nanti.');
+            }
+        }
+
+        fetchData();
+    }, [currentPage, itemsPerPage, sortConfig]);
+
+    const handleSearch = async () => {
+        const filteredDate = rejectedUsers.filter((item) => {
+            return item.nama.toLowerCase().includes(vendorName.toLowerCase())
+        });
+
+        // jika inputan kosong maka tampilkan semua data
+        if (vendorName === null || vendorName === '') {
+            const res = await getRejectUser(
+                currentPage,
+                itemsPerPage,
+                sortConfig.key,
+                sortConfig.direction
+            );
+
+            if (res && res.data && res.data.data) {
+                setRejectedUsers(res.data.data.data);
+                setPagination(res.data.data.pageInfo);
+            } else {
+                toast.error('Gagal mengambil data. Silakan coba lagi nanti.');
+            }
+        } else {
+            setRejectedUsers(filteredDate);
+        }
+    }
 
     const handleDownload = async (index: number, file_badan: string) => {
         setLoadingIndex(index);
@@ -73,11 +123,41 @@ export default function Page() {
         });
     }
 
+    const handleSort = (key: any) => {
+        const direction = (sortConfig.key === key && sortConfig.direction === 'asc') ? 'desc' : 'asc';
+
+        setSortConfig({ key, direction });
+    }
+
+    const handleLimitChange = (event: any) => {
+        setItemsPerPage(event.target.value);
+        setCurrentPage(1);
+    }
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
+
     return (
         <>
+            <ToastContainer />
             <Card>
                 <CardContent>
-                    <ToastContainer />
+                    <div className="flex items-center justify-end mb-4 gap-2">
+                        <div className="w-72 flex justify-end">
+                            <VendorSearch
+                                vendorName={vendorName}
+                                onVendorNameChange={setVendorName}
+                            />
+                        </div>
+
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSearch}
+                        >
+                            Cari
+                        </Button>
+                    </div>
+
                     <TableContainer>
                         <Table className={tableStyles.table}>
                             <TableHead
@@ -88,7 +168,16 @@ export default function Page() {
                                 <TableRow>
                                     <TableCell sx={{ color: "white" }}>No</TableCell>
                                     <TableCell sx={{ color: "white" }}>Nama Vendor</TableCell>
-                                    <TableCell sx={{ color: "white" }}>NPWP</TableCell>
+                                    <TableCell sx={{ color: "white" }}>
+                                        <div className="flex justify-between">
+                                            NPWP
+                                            <Sort
+                                                column="npwp"
+                                                sortConfig={sortConfig}
+                                                onSort={handleSort}
+                                            />
+                                        </div>
+                                    </TableCell>
                                     <TableCell sx={{ color: "white" }}>Email</TableCell>
                                     <TableCell sx={{ color: "white" }}>File</TableCell>
                                     <TableCell sx={{ color: "white" }}>Action</TableCell>
@@ -97,10 +186,10 @@ export default function Page() {
                             <TableBody>
                                 {rejectedUsers.length > 0 ? rejectedUsers.map((item, index) => (
                                     <TableRow key={index}>
-                                        <TableCell>{index + 1}</TableCell>
-                                        <TableCell>{item.nama}</TableCell>
-                                        <TableCell>{item.npwp}</TableCell>
-                                        <TableCell>{item.email}</TableCell>
+                                        <TableCell>{index + 1 + itemsPerPage * (currentPage - 1)}</TableCell>
+                                        <TableCell>{item.nama || '-'}</TableCell>
+                                        <TableCell>{item.npwp || '-'}</TableCell>
+                                        <TableCell>{item.email || '-'}</TableCell>
                                         <TableCell>
                                             <Button
                                                 variant="contained"
@@ -129,6 +218,25 @@ export default function Page() {
                             </TableBody>
                         </Table>
                     </TableContainer>
+
+                    <div className="flex justify-between mt-4">
+                        <CustomTextField
+                            select
+                            value={itemsPerPage}
+                            onChange={handleLimitChange}
+                            className="mr-4"
+                        >
+                            <MenuItem value={10}>10</MenuItem>
+                            <MenuItem value={20}>20</MenuItem>
+                            <MenuItem value={50}>50</MenuItem>
+                        </CustomTextField>
+
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={pagination?.totalPages || 1}
+                            onPageChange={paginate}
+                        />
+                    </div>
                 </CardContent>
             </Card>
         </>

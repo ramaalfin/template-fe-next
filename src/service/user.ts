@@ -2,31 +2,37 @@ import axios from 'axios'
 
 import { getCookie } from 'cookies-next'
 
-export const getInactiveUser = () => {
+export const getInactiveUser = (page: number, limit: number, sortBy: string, sortType: string) => {
   const token = getCookie('accessToken')
 
   try {
-    return axios.get(`${process.env.NEXT_PUBLIC_APP_API}/v1/sys/users/inactive`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+    return axios.get(
+      `${process.env.NEXT_PUBLIC_APP_API}/v1/sys/users/inactive?page=${page}&limit=${limit}&sortBy=${sortBy}&sortType=${sortType}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
   } catch (error: any) {
     console.error(error)
   }
 }
 
-export const getActiveUser = () => {
+export const getActiveUser = (page: number, limit: number, sortBy: string, sortType: string) => {
   const token = getCookie('accessToken')
 
   try {
-    return axios.get(`${process.env.NEXT_PUBLIC_APP_API}/v1/sys/users/active`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+    return axios.get(
+      `${process.env.NEXT_PUBLIC_APP_API}/v1/sys/users/active?page=${page}&limit=${limit}&sortBy=${sortBy}&sortType=${sortType}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
   } catch (error: any) {
     console.error(error)
   }
@@ -51,16 +57,19 @@ export const activateUser = async (id_user: string) => {
   }
 }
 
-export const getRejectUser = () => {
+export const getRejectUser = (page: number, limit: number, sortBy: string, sortType: string) => {
   const token = getCookie('accessToken')
 
   try {
-    return axios.get(`${process.env.NEXT_PUBLIC_APP_API}/v1/sys/users/rejected`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+    return axios.get(
+      `${process.env.NEXT_PUBLIC_APP_API}/v1/sys/users/rejected?page=${page}&limit=${limit}&sortBy=${sortBy}&sortType=${sortType}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
   } catch (error: any) {
     console.error(error)
   }

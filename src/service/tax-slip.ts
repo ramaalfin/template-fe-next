@@ -1,16 +1,19 @@
 import axios from 'axios'
 import { getCookie } from 'cookies-next'
 
-export const getAllTaxSlip = () => {
+export const getAllTaxSlip = (page: number, limit: number, sortBy: string, sortType: string) => {
   const token = getCookie('accessToken')
 
   try {
-    return axios.get(`${process.env.NEXT_PUBLIC_APP_API}/v1/mst/tax-slip`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+    return axios.get(
+      `${process.env.NEXT_PUBLIC_APP_API}/v1/mst/tax-slip?page=${page}&limit=${limit}&sortBy=${sortBy}&sortType=${sortType}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
   } catch (error: any) {
     console.error(error)
   }
