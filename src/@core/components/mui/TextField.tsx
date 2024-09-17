@@ -246,27 +246,7 @@ const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
     '& textarea.MuiInputBase-inputSizeSmall:placeholder-shown': {
       overflowX: 'hidden'
     }
-  },
-
-  // hide arrow on input[type='number']
-  '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
-    'WebkitAppearance': 'none',
-    margin: 0
-  },
-
-  // [type='file]
-  '& input[type=file]': {
-    cursor: 'pointer',
-
-    // Remove default styles
-    '&::-webkit-file-upload-button': {
-      visibility: 'hidden',
-      position: 'absolute',
-      right: '0',
-      top: '0'
-    },
-  },
-
+  }
 }))
 
 const CustomTextField = forwardRef((props: TextFieldProps, ref) => {

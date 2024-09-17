@@ -10,7 +10,6 @@ type StyledMenuLabelProps = RootStylesType & {
 
 const StyledMenuLabel = styled.span<StyledMenuLabelProps>`
   flex-grow: 1;
-  color: #ffffff;
   ${({ textTruncate }) =>
     textTruncate &&
     `

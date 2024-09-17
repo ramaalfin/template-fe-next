@@ -14,6 +14,6 @@ export default function Page() {
   }, [user])
 
   return (
-    <></>
+    <h1>Home {name}!</h1>
   )
 }

@@ -69,7 +69,7 @@ const VerticalNavContent = ({ children }: ChildrenType) => {
   return (
     <>
       <NavHeader>
-        <Link href='/dashboard_admin'>
+        <Link href='/home'>
           <Logo />
         </Link>
         <NavCollapseIcons
@@ -82,7 +82,7 @@ const VerticalNavContent = ({ children }: ChildrenType) => {
       <ScrollWrapper
         {...(isBreakpointReached
           ? {
-            className: 'bs-full overflow-y-auto overflow-x-hidden bg-[#B81118]',
+            className: 'bs-full overflow-y-auto overflow-x-hidden',
             onScroll: container => scrollMenu(container, false)
           }
           : {

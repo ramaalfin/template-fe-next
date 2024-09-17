@@ -24,26 +24,8 @@ export const login = async ({ email, password }: LoginProps, callback: (success:
 
     setCookie('accessToken', response.data.data.tokens.access.token)
 
-    return response.data
+    callback(true, response.data)
   } catch (error: any) {
-    return error.response.data
-  }
-}
-
-export const logout = async ({ refreshToken }: { refreshToken: number }) => {
-  try {
-    await axios.post(
-      ` ${process.env.NEXT_PUBLIC_APP_API}/v1/auth/logout`,
-      {
-        refreshToken: refreshToken
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
-  } catch (error) {
-    console.error(error)
+    callback(false, 'Invalid email or password')
   }
 }
