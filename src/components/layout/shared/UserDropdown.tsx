@@ -18,14 +18,17 @@ import ClickAwayListener from '@mui/material/ClickAwayListener'
 import MenuList from '@mui/material/MenuList'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
+import { CircularProgress } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
-
-// Store Imports
+import { logout } from '@/service/auth'
 import useAuthStore from '@/store/useAuthStore'
+
+// Custom Hook
+import useLoading from '@/hooks/useLoading';
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -38,6 +41,8 @@ const BadgeContentSpan = styled('span')({
 })
 
 const UserDropdown = () => {
+  const { loading, withLoading } = useLoading()
+
   // States
   const [open, setOpen] = useState(false)
 
@@ -49,13 +54,22 @@ const UserDropdown = () => {
 
   const { settings } = useSettings()
 
-  const { user } = useAuthStore()
+  const { user, token } = useAuthStore()
   const [name, setName] = useState<string | null>(null)
   const [email, setEmail] = useState<string | null>(null)
+  const [photo, setPhoto] = useState<string | null>(null)
 
   useEffect(() => {
     setName(user?.nama)
     setEmail(user?.email)
+  }, [user])
+
+  useEffect(() => {
+    if (user?.photo) {
+      setPhoto(user.photo)
+    } else {
+      setPhoto('/images/avatars/nophoto.jpg')
+    }
   }, [user])
 
   const handleDropdownOpen = () => {
@@ -74,15 +88,30 @@ const UserDropdown = () => {
     setOpen(false)
   }
 
-  const logout = useAuthStore((state) => state.logout)
-
   const handleUserLogout = async () => {
-    logout()
-    router.push('/login')
+    if (!token) {
+      return
+    }
+
+    await withLoading(async () => {
+      try {
+        await logout(token)
+
+        useAuthStore.setState({ token: null, user: null })
+        localStorage.removeItem('auth-storage')
+        document.cookie = 'accessToken=; expires=; path=/;'
+
+        router.push('/login')
+      } catch (error) {
+        toast.error('Terjadi kesalahan')
+      }
+    })
   }
 
   return (
     <>
+      <ToastContainer />
+
       <Badge
         ref={anchorRef}
         overlap='circular'
@@ -92,8 +121,8 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt='John Doe'
-          src='/images/avatars/1.png'
+          alt={name}
+          src={photo}
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
         />
@@ -117,7 +146,7 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e as MouseEvent | TouchEvent)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-6 gap-2' tabIndex={-1}>
-                    <Avatar alt='John Doe' src='/images/avatars/1.png' />
+                    <Avatar alt={name} src={photo} />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
                         {name}
@@ -126,10 +155,6 @@ const UserDropdown = () => {
                     </div>
                   </div>
                   <Divider className='mlb-1' />
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
-                    <i className='tabler-user' />
-                    <Typography color='text.primary'>My Profile</Typography>
-                  </MenuItem>
                   <div className='flex items-center plb-2 pli-3'>
                     <Button
                       fullWidth
@@ -139,8 +164,9 @@ const UserDropdown = () => {
                       endIcon={<i className='tabler-logout' />}
                       onClick={handleUserLogout}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
+                      disabled={loading}
                     >
-                      Logout
+                      {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Logout'}
                     </Button>
                   </div>
                 </MenuList>

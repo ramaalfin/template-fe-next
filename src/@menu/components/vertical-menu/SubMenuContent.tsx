@@ -14,9 +14,6 @@ import type { ChildrenType, RootStylesType } from '../../types'
 // Styled Component Imports
 import StyledSubMenuContent from '../../styles/StyledSubMenuContent'
 
-// Style Imports
-import styles from '../../styles/styles.module.css'
-
 export type SubMenuContentProps = HTMLAttributes<HTMLDivElement> &
   RootStylesType &
   Partial<ChildrenType> & {
@@ -29,13 +26,13 @@ export type SubMenuContentProps = HTMLAttributes<HTMLDivElement> &
     isCollapsed?: boolean
     isHovered?: boolean
     browserScroll?: boolean
+    submenu?: any[] | undefined
   }
 
 const SubMenuContent: ForwardRefRenderFunction<HTMLDivElement, SubMenuContentProps> = (props, ref) => {
   // Props
   const {
-    children,
-    submenu,
+    submenu = [],
     open,
     level,
     isCollapsed,
@@ -112,8 +109,8 @@ const SubMenuContent: ForwardRefRenderFunction<HTMLDivElement, SubMenuContentPro
     >
       {/* If browserScroll is false render PerfectScrollbar */}
       {!browserScroll && level === 0 && isPopoutWhenCollapsed && isCollapsed ? (
-        submenu.map((item) => (
-          <PerfectScrollbar key={item.id} options={{ suppressScrollX: true }}>
+        submenu.map((item: any, index: number) => (
+          <PerfectScrollbar key={index} options={{ suppressScrollX: true }}>
             <ul className="py-3 px-4">
               <li>
                 <Link href={item.url} replace={true}>{item.menu}</Link>
@@ -122,8 +119,8 @@ const SubMenuContent: ForwardRefRenderFunction<HTMLDivElement, SubMenuContentPro
           </PerfectScrollbar>
         ))
       ) : (
-        submenu.map((item) => (
-          <div className="py-3 px-4" key={item.id}>
+        submenu.map((item: any, index: number) => (
+          <div className="py-3 px-4" key={index}>
             <Link href={item.url}>{item.menu}</Link>
           </div>
         ))

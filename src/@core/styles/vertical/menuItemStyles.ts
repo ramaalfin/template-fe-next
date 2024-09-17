@@ -27,7 +27,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
           }),
       [`&.${menuClasses.subMenuRoot}.${menuClasses.open} > .${menuClasses.button}, &.${menuClasses.subMenuRoot} > .${menuClasses.button}.${menuClasses.active}`]:
         {
-          backgroundColor: 'var(--mui-palette-action-selected) !important'
+          backgroundColor: 'rgba(255, 255, 255, 0.2) !important'
         },
       [`&.${menuClasses.disabled} > .${menuClasses.button}`]: {
         color: 'var(--mui-palette-text-disabled)',
@@ -38,7 +38,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       [`&:not(.${menuClasses.subMenuRoot}) > .${menuClasses.button}.${menuClasses.active}`]: {
         ...(popoutCollapsed && level > 0
           ? {
-              backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
               color: 'var(--mui-palette-primary-main)',
               [`& .${menuClasses.icon}`]: {
                 color: 'var(--mui-palette-primary-main)'
@@ -47,13 +47,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
           : {
               color: 'var(--mui-palette-primary-contrastText)',
               background:
-                theme.direction === 'ltr'
-                  ? `linear-gradient(270deg,
-                    rgb(var(--mui-palette-primary-mainChannel) / 0.7) 0%,
-                    var(--mui-palette-primary-main) 100%) !important`
-                  : `linear-gradient(270deg,
-                     var(--mui-palette-primary-main) 100%,
-                     rgb(var(--mui-palette-primary-mainChannel) / 0.7) 100%) !important`,
+                theme.direction === 'ltr' ? `rgba(255, 255, 255, 0.2) 0%` : `rgba(255, 255, 255, 0.2) !important`,
               boxShadow: 'var(--mui-customShadows-primary-sm)',
               [`& .${menuClasses.icon}`]: {
                 color: 'inherit'
@@ -65,6 +59,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       paddingBlock: '8px',
       paddingInline: '12px',
       borderRadius: 'var(--border-radius)',
+      backgroundColor: 'transparent',
       ...(!(isCollapsed && !isHovered) && {
         '&:has(.MuiChip-root)': {
           paddingBlock: theme.spacing(1.75)
@@ -77,10 +72,10 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       }),
       ...(!active && {
         '&:hover, &:focus-visible': {
-          backgroundColor: 'var(--mui-palette-action-hover)'
+          backgroundColor: 'rgba(255, 255, 255, 0.2)'
         },
         '&[aria-expanded="true"]': {
-          backgroundColor: 'var(--mui-palette-action-selected)'
+          backgroundColor: 'rgba(255, 255, 255, 0.2)'
         }
       })
     }),
