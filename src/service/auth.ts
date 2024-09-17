@@ -7,7 +7,7 @@ interface LoginProps {
   password: string
 }
 
-export const login = async ({ email, password }: LoginProps) => {
+export const login = async ({ email, password }: LoginProps, callback: (success: boolean, data: any) => void) => {
   try {
     const response = await axios.post(
       ` ${process.env.NEXT_PUBLIC_APP_API}/v1/auth/login`,
@@ -23,7 +23,6 @@ export const login = async ({ email, password }: LoginProps) => {
     )
 
     setCookie('accessToken', response.data.data.tokens.access.token)
-    setCookie('expires', new Date(response.data.data.tokens.access.expires).toString())
 
     return response.data
   } catch (error: any) {
