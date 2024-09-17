@@ -51,7 +51,7 @@ export type Config = {
 
 const themeConfig: Config = {
   templateName: 'Vuexy',
-  homePageUrl: '/dashboard_admin',
+  homePageUrl: '/home',
   settingsCookieName: 'vuexy-mui-next-demo-1',
   mode: 'system', // 'system', 'light', 'dark'
   skin: 'default', // 'default', 'bordered'

@@ -6,6 +6,7 @@ interface AuthState {
   token: any
   setUser: (user: any) => void
   setToken: (token: any) => void
+  logout: () => void
 }
 
 const useAuthStore = create<AuthState>()(
@@ -14,7 +15,12 @@ const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       setUser: user => set(state => ({ ...state, user })),
-      setToken: token => set(state => ({ ...state, token }))
+      setToken: token => set(state => ({ ...state, token })),
+      logout: () => {
+        set({ user: null, token: '' })
+        localStorage.removeItem('auth-storage')
+        document.cookie = 'accessToken=; expires=; refreshToken=; path=/'
+      }
     }),
     {
       name: 'auth-storage',
