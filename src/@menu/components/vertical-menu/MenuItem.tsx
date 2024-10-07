@@ -21,6 +21,7 @@ import MenuButton from './MenuButton'
 // Hook Imports
 import useVerticalNav from '../../hooks/useVerticalNav'
 import useVerticalMenu from '../../hooks/useVerticalMenu'
+import { useRefreshToken } from '@/hooks/useRefreshToken'
 
 // Util Imports
 import { renderMenuIcon } from '../../utils/menuUtils'
@@ -97,8 +98,14 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
     }
   }
 
+  const refreshUserToken = useRefreshToken
+
   // Handle the click event.
   const handleClick = () => {
+    const tokenRefreshed = refreshUserToken()
+
+    if (!tokenRefreshed) return;
+
     if (isToggled) {
       toggleVerticalNav()
     }
@@ -106,7 +113,7 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
 
   // Change active state when the url changes
   useEffect(() => {
-    const href = rest.url || (component && typeof component !== 'string' && component.props.url)
+    const href = 'url' in rest ? rest.url : (component && typeof component !== 'string' && component.props.url)
 
     if (href) {
       // Check if the current url matches any of the children urls

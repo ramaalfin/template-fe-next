@@ -1,6 +1,8 @@
 // Third-party Imports
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
+import 'react-toastify/dist/ReactToastify.css';
+
 // Type Imports
 import type { ChildrenType } from '@core/types'
 

@@ -5,8 +5,9 @@ import { useState } from 'react'
 
 // Next Imports
 import { useRouter } from 'next/navigation'
+import { setCookie } from 'cookies-next'
 
-import { useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form'
 
 // MUI Imports
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -18,18 +19,24 @@ import Button from '@mui/material/Button'
 
 // Third-party Imports
 import classnames from 'classnames'
-import type { z } from 'zod';
+import type { z } from 'zod'
 
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { AxiosError } from 'axios'
 
 // Type Imports
 import type { SystemMode } from '@core/types'
 
 // Component Imports
 import Link from '@components/Link'
+import { CircularProgress } from '@mui/material'
 import Logo from '@components/layout/shared/Logo'
+import CustomTextField from '@/@core/components/mui/TextField'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 
-import { loginFormSchema } from '@/lib/form-schema';
+import { toast, ToastContainer } from 'react-toastify'
+
+import { loginFormSchema } from '@/lib/form-schema'
 
 // Config Imports
 import themeConfig from '@configs/themeConfig'
@@ -37,11 +44,10 @@ import themeConfig from '@configs/themeConfig'
 // Hook Imports
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import CustomTextField from '@/@core/components/mui/TextField';
+import useLoading from '@/hooks/useLoading'
 
-import { login } from '@/service/auth';
-import useAuthStore from '@/store/useAuthStore';
+// service Imports
+import { login } from '@/service/auth'
 
 // Styled Custom Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -68,10 +74,8 @@ const MaskImg = styled('img')({
 })
 
 const LoginV2 = ({ mode }: { mode: SystemMode }) => {
-  // States
+  const { loading, withLoading } = useLoading()
   const [isPasswordShown, setIsPasswordShown] = useState(false)
-
-  // Vars
   const darkImg = '/images/pages/auth-mask-dark.png'
   const lightImg = '/images/pages/auth-mask-light.png'
   const darkIllustration = '/images/illustrations/auth/v2-login-dark.png'
@@ -96,9 +100,6 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const setUser = useAuthStore((state) => state.setUser);
-  const setToken = useAuthStore((state) => state.setToken);
-
   // Form
   const form = useForm({
     defaultValues: {
@@ -108,16 +109,25 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
     resolver: zodResolver(loginFormSchema)
   });
 
-  const onSubmit = (val: z.infer<typeof loginFormSchema>) => {
-    login(val, (success, response) => {
+  const onSubmit = async (val: z.infer<typeof loginFormSchema>) => {
+    await withLoading(async () => {
+      try {
+        const response = await login(val);
 
-      if (success && response && response.code === 200) {
-        setUser(response.data.user);
-        setToken(response.data.tokens);
+        if (response.code === 200) {
+          setCookie('user-client', response.data.user);
+          setCookie('token-client', response.data.tokens);
 
-        router.push('/home');
-      } else if (response && response.code === 401) {
-        alert(response.message);
+          router.push('/dashboard');
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error("Gagal menghubungkan ke server");
+        } else {
+          toast.error('Terjadi kesalahan');
+        }
       }
     });
   }
@@ -142,6 +152,8 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
         )}
       </div>
       <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
+        <ToastContainer />
+
         <Link className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]'>
           <Logo />
         </Link>
@@ -158,7 +170,7 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <CustomTextField autoFocus fullWidth label='Email or Username' placeholder='Enter your email or username' {...field} />
+                      <CustomTextField autoFocus fullWidth label='Email' placeholder='Masukkan Email' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -181,7 +193,7 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
                           endAdornment: (
                             <InputAdornment position='end'>
                               <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
-                                <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
+                                <i className={isPasswordShown ? 'tabler-eye' : 'tabler-eye-off'} />
                               </IconButton>
                             </InputAdornment>
                           )
@@ -194,7 +206,14 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
                 )}
               />
 
-              <Button fullWidth variant='contained' type='submit'>Login</Button>
+              <Button
+                fullWidth
+                variant='contained'
+                type='submit'
+                disabled={loading}
+              >
+                {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Login'}
+              </Button>
             </form>
           </Form>
         </div>

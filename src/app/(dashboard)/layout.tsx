@@ -14,9 +14,11 @@ import Navigation from '@components/layout/vertical/Navigation'
 import Navbar from '@components/layout/vertical/Navbar'
 import VerticalFooter from '@components/layout/vertical/Footer'
 import ScrollToTop from '@core/components/scroll-to-top'
+import DialogProvider from '@/components/DialogProvider'
 
 // Util Imports
 import { getMode, getSystemMode } from '@core/utils/serverHelpers'
+import { IdleProvider } from '@/components/IdleProvider'
 
 const Layout = async ({ children }: ChildrenType) => {
   // Vars
@@ -25,25 +27,29 @@ const Layout = async ({ children }: ChildrenType) => {
   const systemMode = getSystemMode()
 
   return (
-    <Providers direction={direction}>
-      <LayoutWrapper
-        systemMode={systemMode}
-        verticalLayout={
-          <VerticalLayout
-            navigation={<Navigation mode={mode} systemMode={systemMode} />}
-            navbar={<Navbar />}
-            footer={<VerticalFooter />}
-          >
-            {children}
-          </VerticalLayout>
-        }
-      />
-      <ScrollToTop className='mui-fixed'>
-        <Button variant='contained' className='is-10 bs-10 rounded-full p-0 min-is-0 flex items-center justify-center'>
-          <i className='tabler-arrow-up' />
-        </Button>
-      </ScrollToTop>
-    </Providers>
+    <IdleProvider>
+      <Providers direction={direction}>
+        <LayoutWrapper
+          systemMode={systemMode}
+          verticalLayout={
+            <VerticalLayout
+              navigation={<Navigation mode={mode} systemMode={systemMode} />}
+              navbar={<Navbar />}
+              footer={<VerticalFooter />}
+            >
+              {children}
+            </VerticalLayout>
+          }
+        />
+        <ScrollToTop className='mui-fixed'>
+          <Button variant='contained' className='is-10 bs-10 rounded-full p-0 min-is-0 flex items-center justify-center'>
+            <i className='tabler-arrow-up' />
+          </Button>
+        </ScrollToTop>
+
+        <DialogProvider />
+      </Providers>
+    </IdleProvider>
   )
 }
 

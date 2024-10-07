@@ -20,12 +20,19 @@ import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
+import { CircularProgress } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify'
+import { deleteCookie, getCookie } from 'cookies-next'
+
+import { logout } from '@/service/auth'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 
-// Store Imports
-import useAuthStore from '@/store/useAuthStore'
+// Custom Hook
+import useLoading from '@/hooks/useLoading';
+
+import Link from '@/components/Link'
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -38,6 +45,8 @@ const BadgeContentSpan = styled('span')({
 })
 
 const UserDropdown = () => {
+  const { loading, withLoading } = useLoading()
+
   // States
   const [open, setOpen] = useState(false)
 
@@ -49,13 +58,27 @@ const UserDropdown = () => {
 
   const { settings } = useSettings()
 
-  const { user } = useAuthStore()
+  const userData = getCookie('user-client')
+  const tokenData = getCookie('token-client')
+
+  const user = userData ? JSON.parse(userData as string) : null
+  const token = tokenData ? JSON.parse(tokenData as string) : null
+
   const [name, setName] = useState<string | null>(null)
   const [email, setEmail] = useState<string | null>(null)
+  const [photo, setPhoto] = useState<string | null>(null)
 
   useEffect(() => {
     setName(user?.nama)
     setEmail(user?.email)
+  }, [user])
+
+  useEffect(() => {
+    if (user?.photo) {
+      setPhoto(`data:image/jpg;base64,${user.foto}`)
+    } else {
+      setPhoto('/images/avatars/nophoto.jpg')
+    }
   }, [user])
 
   const handleDropdownOpen = () => {
@@ -74,15 +97,35 @@ const UserDropdown = () => {
     setOpen(false)
   }
 
-  const logout = useAuthStore((state) => state.logout)
-
   const handleUserLogout = async () => {
-    logout()
-    router.push('/login')
+    if (!token.access.token) {
+      return
+    }
+
+    await withLoading(async () => {
+      try {
+        const res = await logout(token.access.token)
+
+        if (res && res?.code !== 200) {
+          toast.error(res?.message)
+
+          return
+        } else {
+          deleteCookie('user-client')
+          deleteCookie('token-client')
+
+          router.push('/login')
+        }
+      } catch (error) {
+        toast.error('Terjadi kesalahan')
+      }
+    })
   }
 
   return (
     <>
+      <ToastContainer />
+
       <Badge
         ref={anchorRef}
         overlap='circular'
@@ -92,8 +135,8 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt='John Doe'
-          src='/images/avatars/1.png'
+          alt={name || undefined}
+          src={photo ?? '/images/avatars/nophoto.jpg'}
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
         />
@@ -117,7 +160,10 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e as MouseEvent | TouchEvent)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-6 gap-2' tabIndex={-1}>
-                    <Avatar alt='John Doe' src='/images/avatars/1.png' />
+                    <Avatar
+                      alt={name ?? undefined}
+                      src={photo ?? '/images/avatars/nophoto.jpg'}
+                    />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
                         {name}
@@ -128,7 +174,9 @@ const UserDropdown = () => {
                   <Divider className='mlb-1' />
                   <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='tabler-user' />
-                    <Typography color='text.primary'>My Profile</Typography>
+                    <Link href='/profile'>
+                      <Typography color='text.primary'>My Profile</Typography>
+                    </Link>
                   </MenuItem>
                   <div className='flex items-center plb-2 pli-3'>
                     <Button
@@ -139,8 +187,9 @@ const UserDropdown = () => {
                       endIcon={<i className='tabler-logout' />}
                       onClick={handleUserLogout}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
+                      disabled={loading}
                     >
-                      Logout
+                      {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Logout'}
                     </Button>
                   </div>
                 </MenuList>

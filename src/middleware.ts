@@ -1,22 +1,22 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-import { getCookie } from 'cookies-next'
-
 export function middleware(req: NextRequest) {
-  const token = getCookie('accessToken', { req })
+  const token = req.cookies.get('token-client')?.value
+  const tokenData = token ? JSON.parse(token) : null
+  const accessToken = tokenData ? tokenData.access.token : null
 
-  if (!token && req.nextUrl.pathname !== '/login') {
+  if (!accessToken && req.nextUrl.pathname !== '/login') {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
-  if (token && req.nextUrl.pathname === '/login') {
-    return NextResponse.redirect(new URL('/home', req.url))
+  if (accessToken && req.nextUrl.pathname === '/login') {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/profile/:path*', '/login', '/register', '/home', '/about', '/']
+  matcher: ['/profile', '/login', '/dashboard']
 }
