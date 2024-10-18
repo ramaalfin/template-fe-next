@@ -13,11 +13,12 @@ import useLayoutInit from '@core/hooks/useLayoutInit'
 type LayoutWrapperProps = {
   systemMode: SystemMode
   verticalLayout: ReactElement
+  horizontalLayout: ReactElement
 }
 
 const LayoutWrapper = (props: LayoutWrapperProps) => {
   // Props
-  const { systemMode, verticalLayout } = props
+  const { systemMode, verticalLayout, horizontalLayout } = props
 
   // Hooks
   const { settings } = useSettings()
@@ -27,7 +28,7 @@ const LayoutWrapper = (props: LayoutWrapperProps) => {
   // Return the layout based on the layout context
   return (
     <div className='flex flex-col flex-auto' data-skin={settings.skin}>
-      {verticalLayout}
+      {settings.layout === 'horizontal' ? horizontalLayout : verticalLayout}
     </div>
   )
 }

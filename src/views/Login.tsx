@@ -5,8 +5,8 @@ import { useState } from 'react'
 
 // Next Imports
 import { useRouter } from 'next/navigation'
-import { setCookie } from 'cookies-next'
 
+import { setCookie } from 'cookies-next'
 import { useForm } from 'react-hook-form'
 
 // MUI Imports
@@ -23,18 +23,17 @@ import type { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AxiosError } from 'axios'
+import { CircularProgress } from '@mui/material'
+import { toast, ToastContainer } from 'react-toastify'
 
 // Type Imports
 import type { SystemMode } from '@core/types'
 
 // Component Imports
 import Link from '@components/Link'
-import { CircularProgress } from '@mui/material'
 import Logo from '@components/layout/shared/Logo'
 import CustomTextField from '@/@core/components/mui/TextField'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
-
-import { toast, ToastContainer } from 'react-toastify'
 
 import { loginFormSchema } from '@/lib/form-schema'
 
@@ -118,7 +117,7 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
           setCookie('user-client', response.data.user);
           setCookie('token-client', response.data.tokens);
 
-          router.push('/dashboard');
+          router.push('/dashboard-admin');
         } else {
           toast.error(response.message);
         }
