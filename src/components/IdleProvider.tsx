@@ -12,7 +12,7 @@ import { logout } from '@/service/auth'
 
 export const IdleProvider = ({ children }: { children: ReactNode }) => {
     const router = useRouter()
-    const tokenData = getCookie('token-client')
+    const tokenData = getCookie('token-admin')
     const token = tokenData ? JSON.parse(tokenData) : null
 
     const handleOnIdle = async () => {
@@ -21,8 +21,8 @@ export const IdleProvider = ({ children }: { children: ReactNode }) => {
                 const response = await logout(token.access.token);
 
                 if (response.code === 200) {
-                    deleteCookie('user-client');
-                    deleteCookie('token-client');
+                    deleteCookie('user-admin');
+                    deleteCookie('token-admin');
                     router.push('/login');
                 } else {
                     console.error('Logout failed. Status:', response.status);

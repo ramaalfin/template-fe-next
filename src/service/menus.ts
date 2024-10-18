@@ -3,7 +3,7 @@ import axios from 'axios'
 import { getCookie } from 'cookies-next'
 
 export const menuByRoles = async (callback: (success: boolean, data: any) => void) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
 
   try {

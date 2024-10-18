@@ -114,8 +114,8 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
         const response = await login(val);
 
         if (response.code === 200) {
-          setCookie('user-client', response.data.user);
-          setCookie('token-client', response.data.tokens);
+          setCookie('user-admin', response.data.user);
+          setCookie('token-admin', response.data.tokens);
 
           router.push('/dashboard_admin');
         } else {

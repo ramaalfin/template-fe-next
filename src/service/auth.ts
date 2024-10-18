@@ -74,7 +74,7 @@ export const refreshToken = async (refreshToken: string) => {
 }
 
 export const changePassword = async ({ password, newPassword }: ChangePasswordProps) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
 
   try {

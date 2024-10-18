@@ -26,7 +26,7 @@ const DialogProvider = () => {
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            const tokenStr = getCookie("token-client");
+            const tokenStr = getCookie("token-admin");
             const token = tokenStr ? JSON.parse(tokenStr as string) : null;
 
 
@@ -68,7 +68,7 @@ const DialogProvider = () => {
 
     const handleRefresh = async () => {
         await withLoading(async () => {
-            const tokenStr = getCookie("token-client");
+            const tokenStr = getCookie("token-admin");
             const token = tokenStr ? JSON.parse(tokenStr as string) : null;
 
             if (!token?.refresh?.token) return;
@@ -77,7 +77,7 @@ const DialogProvider = () => {
                 const response = await refreshToken(token.refresh.token);
 
                 if (response.code === 200) {
-                    setCookie("token-client", JSON.stringify(response.data));
+                    setCookie("token-admin", JSON.stringify(response.data));
                     setOpen(false);
                     window.location.reload();
                 } else {
@@ -90,7 +90,7 @@ const DialogProvider = () => {
     };
 
     const handleLogout = async () => {
-        const tokenStr = getCookie("token-client");
+        const tokenStr = getCookie("token-admin");
         const token = tokenStr ? JSON.parse(tokenStr as string) : null;
 
         if (!token?.access?.token) return;
@@ -99,8 +99,8 @@ const DialogProvider = () => {
             const response = await logout(token.access.token);
 
             if (response.code === 200) {
-                deleteCookie("user-client");
-                deleteCookie("token-client");
+                deleteCookie("user-admin");
+                deleteCookie("token-admin");
                 window.location.href = "/login";
             } else {
                 console.error("Logout failed. Status:", response.status);

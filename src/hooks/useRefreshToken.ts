@@ -3,7 +3,7 @@ import { getCookie, setCookie } from 'cookies-next'
 import { refreshToken } from '@/service/auth'
 
 export async function useRefreshToken() {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : null
 
   if (!token?.refresh?.token) return null
@@ -12,7 +12,7 @@ export async function useRefreshToken() {
 
   if (refresh.code === 200) {
     setCookie(
-      'token-client',
+      'token-admin',
       JSON.stringify({
         access: { token: refresh.data.access.token, expires: refresh.data.access.expires },
         refresh: { token: refresh.data.refresh.token, expires: refresh.data.refresh.expires }

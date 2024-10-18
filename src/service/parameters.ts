@@ -18,7 +18,7 @@ interface UpdateParameterProps {
 }
 
 export const getAllParameters = (page: number, limit: number, sortBy: string, sortType: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token.access.token
 
@@ -38,7 +38,7 @@ export const getAllParameters = (page: number, limit: number, sortBy: string, so
 }
 
 export const createParameter = async ({ parameter, deskripsi, nilai, nilai_html }: CreateParameterProps) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token.access.token
 
@@ -76,7 +76,7 @@ export const createParameter = async ({ parameter, deskripsi, nilai, nilai_html 
 }
 
 export const getParameterById = async (id_parameter: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token.access.token
 
@@ -101,7 +101,7 @@ export const updateParameter = async ({
   nilai_html,
   id_parameter
 }: UpdateParameterProps) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token.access.token
 
@@ -139,7 +139,7 @@ export const updateParameter = async ({
 }
 
 export const deleteParameter = async (id_parameter: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token.access.token
 

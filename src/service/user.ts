@@ -19,7 +19,7 @@ interface UpdateUserProps {
 }
 
 export const getInactiveUser = (page: number, limit: number, sortBy: string, sortType: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -39,7 +39,7 @@ export const getInactiveUser = (page: number, limit: number, sortBy: string, sor
 }
 
 export const getActiveUser = (page: number, limit: number, sortBy: string, sortType: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -59,7 +59,7 @@ export const getActiveUser = (page: number, limit: number, sortBy: string, sortT
 }
 
 export const activateUser = async (id_user: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -80,7 +80,7 @@ export const activateUser = async (id_user: string) => {
 }
 
 export const getRejectUser = (page: number, limit: number, sortBy: string, sortType: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -100,7 +100,7 @@ export const getRejectUser = (page: number, limit: number, sortBy: string, sortT
 }
 
 export const rejectUser = async (id_user: string, keterangan: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -123,7 +123,7 @@ export const rejectUser = async (id_user: string, keterangan: string) => {
 }
 
 export const createUser = async ({ npwp, nama, email, password, file }: CreateUserProps) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -150,7 +150,7 @@ export const createUser = async ({ npwp, nama, email, password, file }: CreateUs
 }
 
 export const getUserById = async (id_user: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -169,7 +169,7 @@ export const getUserById = async (id_user: string) => {
 }
 
 export const updateUser = async ({ npwp, nama, password, file, id_user }: UpdateUserProps) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -206,7 +206,7 @@ export const updateUser = async ({ npwp, nama, password, file, id_user }: Update
 }
 
 export const deleteUser = async (id_user: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 
@@ -223,7 +223,7 @@ export const deleteUser = async (id_user: string) => {
 }
 
 export const logoutUser = async (id_user: string) => {
-  const tokenData = getCookie('token-client')
+  const tokenData = getCookie('token-admin')
   const token = tokenData ? JSON.parse(tokenData) : ''
   const accessToken = token?.access?.token
 

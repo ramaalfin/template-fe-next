@@ -30,8 +30,8 @@ import { changePassword, logout } from '@/service/auth'
 const AccountDetails = () => {
   // States
   const router = useRouter()
-  const userData = getCookie('user-client')
-  const tokenData = getCookie('token-client')
+  const userData = getCookie('user-admin')
+  const tokenData = getCookie('token-admin')
   const user = userData ? JSON.parse(userData as string) : null
   const token = tokenData ? JSON.parse(tokenData as string) : null
   const [isPasswordShown, setIsPasswordShown] = useState(false)
@@ -78,8 +78,8 @@ const AccountDetails = () => {
 
         setTimeout(() => {
           if (res && res?.code === 200) {
-            deleteCookie('user-client');
-            deleteCookie('token-client');
+            deleteCookie('user-admin');
+            deleteCookie('token-admin');
 
             router.push('/login');
           }
