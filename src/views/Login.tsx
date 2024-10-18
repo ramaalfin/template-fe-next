@@ -117,7 +117,7 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
           setCookie('user-client', response.data.user);
           setCookie('token-client', response.data.tokens);
 
-          router.push('/dashboard-admin');
+          router.push('/dashboard_admin');
         } else {
           toast.error(response.message);
         }
