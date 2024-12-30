@@ -21,18 +21,13 @@ const DialogProvider = () => {
     const [expirationMilliseconds, setExpirationMilliseconds] = useState(0);
     const { loading, withLoading } = useLoading();
 
-    console.log(expirationMilliseconds);
-
-
     useEffect(() => {
         const intervalId = setInterval(() => {
             const tokenStr = getCookie("token-admin");
             const token = tokenStr ? JSON.parse(tokenStr as string) : null;
 
-
             if (token?.access?.expires) {
                 const expiredTokenTime = token.access.expires.slice(11, 19);
-
 
                 setExpirationMilliseconds(timeToMilliseconds(expiredTokenTime));
             }
@@ -40,6 +35,7 @@ const DialogProvider = () => {
 
         return () => clearInterval(intervalId);
     }, []);
+
 
     useEffect(() => {
         if (!expirationMilliseconds) return;
