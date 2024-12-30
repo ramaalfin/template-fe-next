@@ -6,117 +6,81 @@ import { useState } from 'react'
 // Next Imports
 import { useRouter } from 'next/navigation'
 
-import { setCookie } from 'cookies-next'
-import { useForm } from 'react-hook-form'
+import { setCookie } from 'cookies-next';
+
+import { Controller, useForm } from 'react-hook-form';
 
 // MUI Imports
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { styled, useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Button from '@mui/material/Button'
+import { CircularProgress } from '@mui/material';
 
 // Third-party Imports
 import classnames from 'classnames'
-import type { z } from 'zod'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import { AxiosError } from 'axios'
-import { CircularProgress } from '@mui/material'
-import { toast, ToastContainer } from 'react-toastify'
-
-// Type Imports
-import type { SystemMode } from '@core/types'
-
-// Component Imports
-import Link from '@components/Link'
-import Logo from '@components/layout/shared/Logo'
-import CustomTextField from '@/@core/components/mui/TextField'
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
-
-import { loginFormSchema } from '@/lib/form-schema'
-
-// Config Imports
-import themeConfig from '@configs/themeConfig'
+import { ToastContainer, toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 // Hook Imports
-import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
-import useLoading from '@/hooks/useLoading'
+import CustomTextField from '@/@core/components/mui/TextField';
 
-// service Imports
-import { login } from '@/service/auth'
+import { login } from '@/service/auth';
 
-// Styled Custom Components
-const LoginIllustration = styled('img')(({ theme }) => ({
-  zIndex: 2,
-  blockSize: 'auto',
-  maxBlockSize: 680,
-  maxInlineSize: '100%',
-  margin: theme.spacing(12),
-  [theme.breakpoints.down(1536)]: {
-    maxBlockSize: 550
-  },
-  [theme.breakpoints.down('lg')]: {
-    maxBlockSize: 450
-  }
-}))
+// Custom Hook
+import useLoading from '@/hooks/useLoading';
 
-const MaskImg = styled('img')({
-  blockSize: 'auto',
-  maxBlockSize: 355,
-  inlineSize: '100%',
-  position: 'absolute',
-  insetBlockEnd: 0,
-  zIndex: -1
-})
+interface LoginProps {
+  mode: 'light' | 'dark';
+}
 
-const LoginV2 = ({ mode }: { mode: SystemMode }) => {
+interface Login {
+  username: string
+  password: string
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const LoginV2 = ({ mode }: LoginProps) => {
   const { loading, withLoading } = useLoading()
   const [isPasswordShown, setIsPasswordShown] = useState(false)
-  const darkImg = '/images/pages/auth-mask-dark.png'
-  const lightImg = '/images/pages/auth-mask-light.png'
-  const darkIllustration = '/images/illustrations/auth/v2-login-dark.png'
-  const lightIllustration = '/images/illustrations/auth/v2-login-light.png'
-  const borderedDarkIllustration = '/images/illustrations/auth/v2-login-dark-border.png'
-  const borderedLightIllustration = '/images/illustrations/auth/v2-login-light-border.png'
+
+  const { control, handleSubmit, formState: { errors } } = useForm<Login>({
+    defaultValues: {
+      username: '',
+      password: ''
+    }
+  })
 
   // Hooks
   const router = useRouter()
   const { settings } = useSettings()
-  const theme = useTheme()
-  const hidden = useMediaQuery(theme.breakpoints.down('md'))
-  const authBackground = useImageVariant(mode, lightImg, darkImg)
-
-  const characterIllustration = useImageVariant(
-    mode,
-    lightIllustration,
-    darkIllustration,
-    borderedLightIllustration,
-    borderedDarkIllustration
-  )
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  // Form
-  const form = useForm({
-    defaultValues: {
-      email: '',
-      password: ''
-    },
-    resolver: zodResolver(loginFormSchema)
-  });
+  const onSubmit = async (data: Login) => {
+    const payload = {
+      email: data.username,
+      password: data.password
+    }
 
-  const onSubmit = async (val: z.infer<typeof loginFormSchema>) => {
     await withLoading(async () => {
       try {
-        const response = await login(val);
+        const response = await login(payload);
 
         if (response.code === 200) {
-          setCookie('user-admin', response.data.user);
-          setCookie('token-admin', response.data.tokens);
+          const userData = response.data.user;
+          const tokens = response.data.tokens;
 
+          const { foto, ...userWithoutPhoto } = userData;
+
+          setCookie('user-admin', userWithoutPhoto);
+
+          if (foto) {
+            setCookie('photo-admin', foto);
+          }
+
+          setCookie('token-admin', tokens);
           router.push('/dashboard_admin');
         } else {
           toast.error(response.message);
@@ -141,80 +105,71 @@ const LoginV2 = ({ mode }: { mode: SystemMode }) => {
           }
         )}
       >
-        <LoginIllustration src={characterIllustration} alt='character-illustration' />
-        {!hidden && (
-          <MaskImg
-            alt='mask'
-            src={authBackground}
-            className={classnames({ 'scale-x-[-1]': theme.direction === 'rtl' })}
-          />
-        )}
+        <img src='/images/illustrations/auth/v2-login-light-border.png' alt='character-illustration' className='w-96' />
       </div>
       <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
         <ToastContainer />
 
-        <Link className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]'>
-          <Logo />
-        </Link>
         <div className='flex flex-col gap-6 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset] mbs-11 sm:mbs-14 md:mbs-0'>
           <div className='flex flex-col gap-1'>
-            <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</Typography>
+            <Typography variant='h4'>Welcome to template 👋🏻</Typography>
             <Typography>Please sign-in to your account and start the adventure</Typography>
           </div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <CustomTextField autoFocus fullWidth label='Email' placeholder='Masukkan Email' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+          <form className="space-y-5">
+            <div>
+              <Controller
+                control={control}
+                name="username"
+                rules={{ required: 'Username harus diisi' }}
+                render={({ field: { onChange } }) => (
+                  <CustomTextField
+                    fullWidth
+                    label='Username'
+                    placeholder='Enter your Username'
+                    onChange={onChange}
+                  />
                 )}
               />
+              {errors.username && <p className="text-red-500 mt-1">{errors.username.message}</p>}
+            </div>
 
-              <FormField
-                control={form.control}
+            <div>
+              <Controller
+                control={control}
                 name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <CustomTextField
-                        fullWidth
-                        label='Password'
-                        placeholder='············'
-                        id='outlined-adornment-password'
-                        type={isPasswordShown ? 'text' : 'password'}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position='end'>
-                              <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
-                                <i className={isPasswordShown ? 'tabler-eye' : 'tabler-eye-off'} />
-                              </IconButton>
-                            </InputAdornment>
-                          )
-                        }}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                rules={{ required: 'Password harus diisi' }}
+                render={({ field: { onChange } }) => (
+                  <CustomTextField
+                    fullWidth
+                    label='Password'
+                    type={isPasswordShown ? 'text' : 'password'}
+                    placeholder='Enter your password'
+                    onChange={onChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position='end'>
+                          <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
+                            <i className={isPasswordShown ? 'tabler-eye' : 'tabler-eye-off'} />
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}
+                  />
                 )}
               />
+              {errors.password && <p className="text-red-500 mt-1">{errors.password.message}</p>}
+            </div>
 
-              <Button
-                fullWidth
-                variant='contained'
-                type='submit'
-                disabled={loading}
-              >
-                {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Login'}
-              </Button>
-            </form>
-          </Form>
+            <Button
+              fullWidth
+              variant='contained'
+              type='submit'
+              disabled={loading}
+              onClick={handleSubmit(onSubmit)}
+            >
+              {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Login'}
+            </Button>
+          </form>
         </div>
       </div>
     </div>
